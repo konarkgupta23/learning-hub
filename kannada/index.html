@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kannada in 90 Days</title>
 <link rel="manifest" href="../manifest.webmanifest">
 <meta name="theme-color" content="#ff8a4c">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('hubTheme')||'light'}catch(e){document.documentElement.dataset.theme='light'}</script>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+Tamma+2:wght@600;800&family=Anek+Kannada:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 /* Layout idea: a one-screen phone app. Karnataka flag yellow and red carry the identity; every Kannada line is shown three ways (roman, Hindi letters, Kannada). */
@@ -24,18 +25,22 @@
   --red:#ff6b86; --on-red:#1b1730; --yel:#ffd35c; --on-yel:#1b1730; --teal:#4fd8d2; --on-teal:#1b1730; --ok:#4fe0b5; --bad:#ff8fa0; --shadow:0 4px 14px rgba(0,0,0,.3); color-scheme:dark}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--body);display:flex;flex-direction:column}
+body{height:100dvh}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--body);display:flex;flex-direction:column;overflow-wrap:anywhere;overflow:hidden}
 header{flex:none;background:var(--grad);color:var(--on-grad);box-shadow:var(--shadow);position:relative;z-index:1}
 .flag{display:none}
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px 10px;max-width:720px;margin:auto}
-.top h1{font:800 22px/1 var(--disp);margin:4px 0 0}
-.stats{display:flex;gap:8px;font-size:13px;font-variant-numeric:tabular-nums}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;max-width:760px;margin:auto}
+.menu{flex:none;color:inherit;text-decoration:none;font:600 14px var(--disp);background:rgba(255,255,255,.6);border-radius:99px;padding:3px 10px}
+.top h1{font:800 clamp(18px,5.2vw,24px)/1.1 var(--disp);margin:4px 0 0;flex:1 1 auto;min-width:0}
+.stats{display:flex;flex-wrap:wrap;gap:6px;font-size:13px;font-variant-numeric:tabular-nums;margin-left:auto}
+#th{border:0;cursor:pointer;font:700 13px var(--body)}
 .pill{background:rgba(255,255,255,.88);color:#2b2350;border-radius:99px;padding:2px 10px;font-weight:700;white-space:nowrap}
 .pill.r{background:#2b2350;color:#fff}
-main{flex:1;overflow-y:auto;padding:16px}
-.wrap{max-width:720px;margin:auto;display:flex;flex-direction:column;gap:14px}
-nav{flex:none;display:flex;background:var(--card);border-top:1px solid var(--line)}
-nav a{flex:1;text-align:center;padding:10px 0 12px;margin:0 2px;color:var(--mute);text-decoration:none;font:600 14px var(--disp);border-top:3px solid transparent;border-radius:0 0 12px 12px}
+main{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:16px}
+.wrap{max-width:760px;margin:auto;display:flex;flex-direction:column;gap:14px}
+.wrap>*,.card,.body>*,.ph>div{min-width:0}
+nav{flex:none;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav a{flex:1;text-align:center;padding:10px 0 12px;margin:0 1px;min-width:0;color:var(--mute);text-decoration:none;font:600 clamp(12px,3.4vw,15px) var(--disp);border-top:3px solid transparent;border-radius:0 0 12px 12px}
 nav a.on{color:var(--red);border-top-color:var(--red);background:color-mix(in srgb,var(--yel) 28%,transparent)}
 h2{font:800 24px/1.15 var(--disp);margin:6px 0 0;text-wrap:balance}
 h3{font:800 18px/1.2 var(--disp);margin:0 0 6px}
@@ -49,6 +54,7 @@ button,select{font:600 15px var(--body);color:var(--ink)}
 .btn.g{background:var(--card);color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 :focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+.ph>div{flex:1}
 .ph{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
 .ph:first-of-type{border-top:0}
 .ph b{display:block;font-size:18px;line-height:1.3}
@@ -56,9 +62,10 @@ button,select{font:600 15px var(--body);color:var(--ink)}
 .kn{display:block;font-size:13px;color:var(--mute)}
 .ph i{display:block;font-style:normal;font-size:15px}
 .sp{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--teal);color:var(--on-teal);cursor:pointer;font-size:13px}
-.k{color:var(--red);font-weight:700;cursor:pointer;white-space:nowrap}
+.k{color:var(--red);font-weight:700;cursor:pointer}
 details{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
 summary{padding:12px 14px;cursor:pointer;display:flex;gap:10px;align-items:center;list-style:none}
+summary>span:last-child{min-width:0;flex:1}
 summary::-webkit-details-marker{display:none}
 .num{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 15px var(--disp);background:var(--bg);border:2px solid var(--line)}
 .done .num{background:var(--ok);color:var(--card);border-color:var(--ok)}
@@ -69,12 +76,13 @@ summary strong{display:block;font:800 17px/1.2 var(--disp)}
 .gb h4{margin:0 0 4px;font:800 15px var(--disp)}
 .dlg{border-left:3px solid var(--red);padding-left:10px}
 .dlg .who{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
-.path{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.path{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:8px}
 .path a{text-decoration:none;color:var(--ink);text-align:center;font-size:12px}
 .path .num{margin:0 auto 2px}
 .task{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
 .task:first-of-type{border-top:0}
 .task input{width:22px;height:22px;accent-color:var(--red);flex:none}
+.task>span{flex:1;min-width:0}
 .task a{color:var(--red);font-weight:700;margin-left:auto;white-space:nowrap}
 .q{font-size:20px;margin:8px 0 12px}
 .q b{display:block;font-size:24px}
@@ -86,12 +94,13 @@ summary strong{display:block;font:800 17px/1.2 var(--disp)}
 .step{font-size:13px;color:var(--mute);margin:0}
 table{width:100%;border-collapse:collapse}
 td{padding:8px 4px;border-top:1px solid var(--line);vertical-align:top}
-td:first-child{width:38%;font-size:14px;color:var(--mute)}
+td:first-child{width:36%;font-size:14px;color:var(--mute)}
+table{table-layout:fixed}
 td b{font-size:18px}
-.tabs{display:flex;gap:6px;overflow-x:auto}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
 .tabs button{flex:none;border:1.5px solid var(--line);background:var(--card);border-radius:99px;padding:6px 12px;cursor:pointer}
 .tabs button.on{background:var(--red);color:var(--on-red);border-color:var(--red)}
-select{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:9px;max-width:100%}
+select{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:9px;max-width:100%;min-width:0;flex:1 1 180px;width:100%;text-overflow:ellipsis}
 ul{margin:0;padding-left:20px} li{margin-bottom:6px}
 a{color:var(--red)}
 .tag{display:block;font-size:12px;color:var(--mute)}
@@ -115,7 +124,7 @@ a{color:var(--red)}
 </style>
 </head>
 <body>
-<header><div class="flag"></div><div class="top"><h1><a href="../" style="color:inherit;text-decoration:none;font-size:15px;margin-right:10px;background:rgba(255,255,255,.6);border-radius:99px;padding:2px 10px" aria-label="Back to menu">&#8249; Menu</a>Kannada in 90 Days</h1><div class="stats"><span class="pill r" id="st"></span><span class="pill" id="xp"></span></div></div></header>
+<header><div class="flag"></div><div class="top"><a class="menu" href="../" aria-label="Back to menu">&#8249; Menu</a><h1>Kannada in 90 Days</h1><div class="stats"><button class="pill" id="th" type="button"></button><span class="pill r" id="st"></span><span class="pill" id="xp"></span></div></div></header>
 <main><div class="wrap" id="v"></div></main>
 <nav id="nav"><a href="#today">Today</a><a href="#course">Course</a><a href="#words">Words</a><a href="#verbs">Verbs</a><a href="#practice">Practice</a><a href="#guide">Guide</a></nav>
 <script>
@@ -429,7 +438,7 @@ function build(w){const pa=$('#pa'),clean=k=>rom(k).replace(/[?.,!]/g,'').split(
   next()}
 function vGuide(){const yt=q=>'https://www.youtube.com/results?search_query='+encodeURIComponent(q);
   v.innerHTML=`<h2>Guide</h2>
-  <div class="card hi"><h3>How to use this</h3><ul><li><b>Three lines per phrase.</b> Roman letters for exact length and tongue position, Hindi letters in red for your ear, Kannada script only as a reference. You do not need to read the script.</li><li><b>Words tab.</b> Everyday Bengaluru vocabulary by situation. Add one pack a week alongside the lesson.</li><li><b>Speak every line aloud.</b> Silent reading builds recognition, not speech.</li><li><b>30 minutes a day</b>, split as on the Today tab. Idle five minutes: do flashcards or one verb drill.</li><li><b>One week, one lesson.</b> Pass the quiz, do the real-world mission, move on.</li><li>Progress is saved on this phone. Once installed, everything except the outside links works offline.</li></ul></div>
+  <div class="card hi"><h3>How to use this</h3><ul><li><b>Three lines per phrase.</b> Roman letters for exact length and tongue position, Hindi letters in red for your ear, Kannada script only as a reference. You do not need to read the script.</li><li><b>Words tab.</b> Everyday Bengaluru vocabulary by situation. Add one pack a week alongside the lesson.</li><li><b>Speak every line aloud.</b> Silent reading builds recognition, not speech.</li><li><b>30 minutes a day</b>, split as on the Today tab. Idle five minutes: do flashcards or one verb drill.</li><li><b>One week, one lesson.</b> Pass the quiz, do the real-world mission, move on.</li><li>Progress is saved on this phone. Once installed, everything except the outside links works offline.</li><li>The Bright / Dark button at the top switches the colours, whatever your phone is set to.</li></ul></div>
   <div class="card"><h3>Sounds: what Hindi already gives you</h3><p>Almost every Kannada sound exists in Hindi. Fix these seven things and you will sound right.</p>
    ${[["Say the last vowel","Hindi drops the final a. Kannada never does. It is Kannada, not Kannad. {ಬೇಡ} has two beats, {ಮನೆ} has two beats. The red Hindi line cannot show this, so trust the roman line."],
       ["Short e and short o","Hindi has only long ए and ओ. Kannada has both. Short: {ಎಲೆ} leaf, {ಒಂದು} one. Long: {ಏಳು} seven, {ಓದು} read. In roman, a bar on top (ē, ō) means long. No bar means clipped, like the e in English pen."],
@@ -470,6 +479,9 @@ function route(){const h=(location.hash||'').slice(1),k=R[h]?h:'today';R[k]();
   document.querySelector('main').scrollTop=0;if(k==='course'){const o=document.querySelector('details[open]');if(o&&o.id!=='w0')o.scrollIntoView()}}
 addEventListener('hashchange',route);hud();route();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('../sw.js').catch(()=>{});
+(function(){const b=document.getElementById('th');if(!b)return;const r=document.documentElement;
+  const show=()=>{b.textContent=r.dataset.theme==='dark'?'\u2600 Bright':'\u263E Dark'};
+  b.onclick=()=>{r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';try{localStorage.setItem('hubTheme',r.dataset.theme)}catch(e){}show()};show()})();
 </script>
 </body>
 </html>
