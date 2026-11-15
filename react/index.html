@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>React for ServiceNow</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#ff8a4c">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('hubTheme')||'light'}catch(e){document.documentElement.dataset.theme='light'}</script>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Tamma+2:wght@600;800&family=Anek+Kannada:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: same one-screen phone shell as the Kannada app. This one is a reading guide: five tabs, tick-offs for weeks, JS concepts and project steps. */
+:root{
+  --bg:#fff7e6; --card:#ffffff; --ink:#2b2350; --mute:#6f6a8a; --line:#f0e4c8;
+  --red:#ef3b5d; --on-red:#ffffff; --yel:#ffc93c; --on-yel:#2b2350; --teal:#0b7f7b; --ok:#0f9d7a;
+  --code:#fbf1d9;
+  --grad:linear-gradient(120deg,#ffc93c,#ff8a4c 55%,#ef3b5d); --on-grad:#2b2350; --shadow:0 4px 14px rgba(43,35,80,.08);
+  --disp:'Baloo Tamma 2','Anek Kannada',system-ui,sans-serif;
+  --body:'Anek Kannada',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Roboto Mono",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1b1730; --card:#28223f; --ink:#f7f1ff; --mute:#b5aed0; --line:#3b3458;
+  --red:#ff6b86; --on-red:#1b1730; --yel:#ffd35c; --on-yel:#1b1730; --teal:#4fd8d2; --ok:#4fe0b5; --code:#1f1a36; --shadow:0 4px 14px rgba(0,0,0,.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1b1730; --card:#28223f; --ink:#f7f1ff; --mute:#b5aed0; --line:#3b3458;
+  --red:#ff6b86; --on-red:#1b1730; --yel:#ffd35c; --on-yel:#1b1730; --teal:#4fd8d2; --ok:#4fe0b5; --code:#1f1a36; --shadow:0 4px 14px rgba(0,0,0,.3); color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--body);display:flex;flex-direction:column;overflow-wrap:anywhere}
+header{flex:none;background:var(--grad);color:var(--on-grad);box-shadow:var(--shadow);position:relative;z-index:1}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;max-width:760px;margin:auto}
+.menu{flex:none;color:inherit;text-decoration:none;font:600 14px var(--disp);background:rgba(255,255,255,.6);border-radius:99px;padding:3px 10px}
+.top h1{font:800 clamp(18px,5.2vw,24px)/1.1 var(--disp);margin:4px 0 0;flex:1 1 auto;min-width:0}
+.stats{display:flex;flex-wrap:wrap;gap:6px;font-size:13px;font-variant-numeric:tabular-nums;margin-left:auto}
+#th{border:0;cursor:pointer;font:700 13px var(--body)}
+.pill{background:rgba(255,255,255,.88);color:#2b2350;border-radius:99px;padding:2px 10px;font-weight:700;white-space:nowrap}
+.pill.r{background:#2b2350;color:#fff}
+main{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:16px}
+.wrap{max-width:760px;margin:auto;display:flex;flex-direction:column;gap:14px}
+.wrap>*,.card,.body>*{min-width:0}
+section[hidden]{display:none}
+nav{flex:none;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav a{flex:1;text-align:center;padding:10px 0 12px;margin:0 1px;min-width:0;color:var(--mute);text-decoration:none;font:600 clamp(12px,3.4vw,15px) var(--disp);border-top:3px solid transparent;border-radius:0 0 12px 12px}
+nav a.on{color:var(--red);border-top-color:var(--red);background:color-mix(in srgb,var(--yel) 28%,transparent)}
+h2{font:800 24px/1.15 var(--disp);margin:6px 0 0;text-wrap:balance}
+h3{font:800 18px/1.2 var(--disp);margin:0 0 6px}
+p{margin:0 0 8px}
+p:last-child{margin-bottom:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)}
+.hi{border-left:6px solid var(--yel)}
+.mute{color:var(--mute);font-size:14px}
+a{color:var(--red)}
+:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+ul{margin:0;padding-left:20px} li{margin-bottom:6px} li:last-child{margin-bottom:0}
+code{font:500 .88em var(--mono);background:var(--code);border-radius:6px;padding:1px 5px}
+pre{margin:0;background:var(--code);border:1px solid var(--line);border-radius:12px;padding:12px;overflow-x:auto;white-space:pre;overflow-wrap:normal;font:500 13.5px/1.5 var(--mono);tab-size:2}
+pre code{background:none;padding:0;font:inherit}
+details{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+summary{padding:12px 14px;cursor:pointer;display:flex;gap:10px;align-items:center;list-style:none}
+summary>span:last-child{min-width:0;flex:1}
+summary::-webkit-details-marker{display:none}
+.num{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 15px var(--disp);background:var(--bg);border:2px solid var(--line)}
+.done .num{background:var(--ok);color:var(--card);border-color:var(--ok)}
+summary strong{display:block;font:800 17px/1.2 var(--disp)}
+.body{padding:0 14px 14px;display:flex;flex-direction:column;gap:12px}
+.gb{background:color-mix(in srgb,var(--yel) 16%,var(--card));border-radius:12px;padding:10px 12px;font-size:15px}
+.gb h4{margin:0 0 4px;font:800 15px var(--disp)}
+.inr{border-left:3px solid var(--red);padding-left:10px}
+.task{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);cursor:pointer}
+.card>.task:first-of-type{border-top:0}
+.task input{width:22px;height:22px;accent-color:var(--red);flex:none}
+.task>span{flex:1;min-width:0}
+.tag{display:block;font:800 12px var(--disp);color:var(--teal);text-transform:uppercase;letter-spacing:.05em}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0 6px}
+.bar i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th,td{padding:8px 6px 8px 0;border-top:1px solid var(--line);vertical-align:top;text-align:left;font-size:15px}
+th{border-top:0;font:800 14px var(--disp);color:var(--mute)}
+.warn{border-left:6px solid var(--red)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:no-preference){
+  section>*{animation:rise .34s cubic-bezier(.2,.8,.2,1) both}
+  section>*:nth-child(2){animation-delay:.04s}section>*:nth-child(3){animation-delay:.08s}section>*:nth-child(n+4){animation-delay:.12s}
+  nav a{transition:color .2s,background .25s,border-color .2s}
+  .bar i{transition:width .6s ease}
+}
+</style>
+</head>
+<body>
+<header><div class="top"><a class="menu" href="../" aria-label="Back to menu">&#8249; Menu</a><h1>React for ServiceNow</h1><div class="stats"><button class="pill" id="th" type="button"></button><span class="pill r" id="pw"></span></div></div></header>
+<main>
+
+<!-- ================= PLAN ================= -->
+<section class="wrap" id="s-plan">
+  <h2>The 6-week plan</h2>
+  <p class="mute">About 5 hours a week: three 1-hour weekday sessions and one 2-hour weekend block. Each week ends with something that runs.</p>
+  <div class="card hi"><h3>Your progress</h3><div class="bar"><i id="bar"></i></div><p class="mute" id="sum"></p></div>
+
+  <details id="w1"><summary><span class="num">1</span><span><strong>Modern JavaScript</strong><span class="mute">Week 1</span></span></summary><div class="body">
+    <div class="gb"><h4>Learn</h4><code>let</code>/<code>const</code>, arrow functions, destructuring, spread, template literals, <code>map</code>/<code>filter</code>/<code>reduce</code>, import/export, promises, <code>async</code>/<code>await</code>, <code>fetch</code></div>
+    <div class="gb"><h4>Build</h4>Node script that calls the Table API on your PDI and prints open incidents grouped by priority</div>
+    <p class="mute">Use: the <a href="#js">JS tab</a> here for revision, and Scrimba Learn JavaScript on the <a href="#videos">Videos tab</a>.</p>
+    <label class="task"><input type="checkbox" data-k="w" data-i="1"><span>Week 1 done</span></label>
+  </div></details>
+
+  <details id="w2"><summary><span class="num">2</span><span><strong>React core</strong><span class="mute">Week 2</span></span></summary><div class="body">
+    <div class="gb"><h4>Learn</h4>Vite setup, JSX, components, props, <code>useState</code>, events, lists and keys, conditional rendering</div>
+    <div class="gb"><h4>Build</h4>Static incident list with a priority filter, using hard-coded JSON</div>
+    <p class="mute">Use: Scrimba Learn React on the <a href="#videos">Videos tab</a>.</p>
+    <label class="task"><input type="checkbox" data-k="w" data-i="2"><span>Week 2 done</span></label>
+  </div></details>
+
+  <details id="w3"><summary><span class="num">3</span><span><strong>Effects and data</strong><span class="mute">Week 3</span></span></summary><div class="body">
+    <div class="gb"><h4>Learn</h4><code>useEffect</code>, loading and error states, controlled forms, lifting state, a first custom hook</div>
+    <div class="gb"><h4>Build</h4>Same list, now loading live data with a <code>useIncidents</code> hook, plus a create-incident form</div>
+    <p class="mute">Use: keep going with Scrimba Learn React. Stop after state, effects and forms.</p>
+    <label class="task"><input type="checkbox" data-k="w" data-i="3"><span>Week 3 done</span></label>
+  </div></details>
+
+  <details id="w4"><summary><span class="num">4</span><span><strong>ServiceNow SDK</strong><span class="mute">Week 4</span></span></summary><div class="body">
+    <div class="gb"><h4>Learn</h4>Install the SDK, scaffold an app from the React template, project layout (<code>src/client</code>, <code>src/fluent</code>), Fluent basics, <code>UiPage</code>, build and install</div>
+    <div class="gb"><h4>Build</h4>Scaffolded React app deployed to your PDI and opening at its <code>.do</code> endpoint</div>
+    <p class="mute">Use: the two ServiceNow videos on the <a href="#videos">Videos tab</a>, and the platform facts on the <a href="#guide">Guide tab</a>.</p>
+    <label class="task"><input type="checkbox" data-k="w" data-i="4"><span>Week 4 done</span></label>
+  </div></details>
+
+  <details id="w5"><summary><span class="num">5</span><span><strong>Project build</strong><span class="mute">Week 5</span></span></summary><div class="body">
+    <div class="gb"><h4>Learn</h4>URL-based view routing, session auth and the <code>X-UserToken</code> header, Scripted REST API, component structure</div>
+    <div class="gb"><h4>Build</h4>Incident Triage Board, core features</div>
+    <p class="mute">Use: the build order on the <a href="#project">Project tab</a>.</p>
+    <label class="task"><input type="checkbox" data-k="w" data-i="5"><span>Week 5 done</span></label>
+  </div></details>
+
+  <details id="w6"><summary><span class="num">6</span><span><strong>Finish and package</strong><span class="mute">Week 6</span></span></summary><div class="body">
+    <div class="gb"><h4>Learn</h4>Just enough TypeScript to read <code>.now.ts</code> and <code>.tsx</code>, error handling, ACL checks, Git</div>
+    <div class="gb"><h4>Build</h4>Project polished, pushed to GitHub with a README, added to your resume</div>
+    <label class="task"><input type="checkbox" data-k="w" data-i="6"><span>Week 6 done</span></label>
+  </div></details>
+
+  <div class="card"><h3>Pacing</h3><ul>
+    <li>Week 1 matters most. Service Portal code is mostly ES5, and React assumes modern syntax everywhere.</li>
+    <li>Weeks 2 and 3 are done locally with Vite, outside ServiceNow. Feedback is faster and the React you learn is the same.</li>
+    <li>If a week slips, cut scope from the project rather than skipping week 1 or 3.</li>
+  </ul></div>
+</section>
+
+<!-- ================= JS ================= -->
+<section class="wrap" id="s-js" hidden>
+  <h2>JavaScript to revise</h2>
+  <p class="mute">These twelve concepts cover almost all the JavaScript that React code uses. Each builds on the one before. Tick one off when it feels familiar.</p>
+
+  <details id="j1"><summary><span class="num">1</span><span><strong>let and const</strong></span></summary><div class="body">
+    <p><code>const</code> cannot be reassigned; <code>let</code> can. Both are block-scoped, unlike <code>var</code>. Use <code>const</code> by default. The contents of a const object or array can still be changed; only the variable itself cannot be reassigned.</p>
+<pre><code>const name = 'Konark';
+let count = 0;
+count = count + 1;</code></pre>
+    <p class="inr"><b>In React:</b> almost everything is <code>const</code>, including components and state.</p>
+    <p><a href="https://javascript.info/variables" target="_blank" rel="noopener">Read more</a></p>
+    <label class="task"><input type="checkbox" data-k="j" data-i="1"><span>Revised</span></label>
+  </div></details>
+
+  <details id="j2"><summary><span class="num">2</span><span><strong>Arrow functions</strong></span></summary><div class="body">
+    <p>A shorter way to write a function. With one expression, the result is returned without writing <code>return</code>.</p>
+<pre><code>const double = (n) =&gt; n * 2;
+const greet = (name) =&gt; {
+  return 'Hi ' + name;
+};</code></pre>
+    <p class="inr"><b>In React:</b> components, event handlers and callbacks are usually arrow functions.</p>
+    <p><a href="https://javascript.info/arrow-functions-basics" target="_blank" rel="noopener">Read more</a></p>
+    <label class="task"><input type="checkbox" data-k="j" data-i="2"><span>Revised</span></label>
+  </div></details>
+
+  <details id="j3"><summary><span class="num">3</span><span><strong>Template literals</strong></span></summary><div class="body">
+    <p>Strings in backticks that can hold variables and span lines.</p>
+<pre><code>const msg = `Incident ${number} is ${state}`;</code></pre>
+    <p class="inr"><b>In React:</b> building URLs, class names and labels.</p>
+    <p><a href="https://javascript.info/string" target="_blank" rel="noopener">Read more</a></p>
+    <label class="task"><input type="checkbox" data-k="j" data-i="3"><span>Revised</span></label>
+  </div></details>
+
+  <details id="j4"><summary><span class="num">4</span><span><strong>Destructuring</strong></span></summary><div class="body">
+    <p>Pull values out of an object or array into variables in one line.</p>
+<pre><code>const { number, priority } = incident;
+const [first, second] = list;</code></pre>
+    <p class="inr"><b>In React:</b> reading props, and <code>const [value, setValue] = useState()</code> is array destructuring.</p>
+    <p><a href="https://javascript.info/destructuring-assignment" target="_blank" rel="noopener">Read more</a></p>
+    <label class="task"><input type="checkbox" data-k="j" data-i="4"><span>Revised</span></label>
+  </div></details>
+
+  <details id="j5"><summary><span class="num">5</span><span><strong>Spread and rest (...)</strong></span></summary><div class="body">
+    <p>Spread copies the contents of an array or object into a new one. Rest collects the remaining items.</p>
+<pre><code>const updated = { ...incident, state: 'Closed' };
+const more = [...list, newItem];</code></pre>
+    <p class="inr"><b>In React:</b> you never change state directly; you create a new copy with spread. This is the biggest habit change from AngularJS.</p>
+    <p><a href="https://javascript.info/rest-parameters-spread" target="_blank" rel="noopener">Read more</a></p>
+    <label class="task"><input type="checkbox" data-k="j" data-i="5"><span>Revised</span></label>
+  </div></details>
+
+  <details id="j6"><summary><span class="num">6</span><span><strong>Array methods: map, filter, find, reduce</strong></span></summary><div class="body">
+    <p>They return a new result instead of changing the original array.</p>
+<pre><code>const open = incidents.filter(i =&gt; i.active);
+const numbers = incidents.map(i =&gt; i.number);
+const one = incidents.find(i =&gt; i.sys_id === id);</code></pre>
+    <p class="inr"><b>In React:</b> <code>map</code> replaces <code>ng-repeat</code> for rendering lists; <code>filter</code> drives search and filters.</p>
+    <p><a href="https://javascript.info/array-methods" target="_blank" rel="noopener">Read more</a></p>
+    <label class="task"><input type="checkbox" data-k="j" data-i="6"><span>Revised</span></label>
+  </div></details>
+
+  <details id="j7"><summary><span class="num">7</span><span><strong>Short conditions: ternary, &amp;&amp;, ?. and ??</strong></span></summary><div class="body">
+<pre><code>const label = isOpen ? 'Open' : 'Closed';
+const group = incident.assignment_group?.name;
+const title = incident.short_description ?? 'No title';</code></pre>
+    <p><code>?.</code> stops safely if something is null or undefined. <code>??</code> gives a fallback only for null or undefined.</p>
+    <p class="inr"><b>In React:</b> these replace <code>ng-if</code> and <code>ng-show</code> inside JSX. One difference to know: <code>ng-show</code> hides an element with CSS, while these conditions leave it out of the page completely, like <code>ng-if</code>.</p>
+    <p><a href="https://javascript.info/optional-chaining" target="_blank" rel="noopener">Read more on ?.</a> &middot; <a href="https://javascript.info/nullish-coalescing-operator" target="_blank" rel="noopener">Read more on ??</a></p>
+    <label class="task"><input type="checkbox" data-k="j" data-i="7"><span>Revised</span></label>
+  </div></details>
+
+  <details id="j8"><summary><span class="num">8</span><span><strong>Modules: import and export</strong></span></summary><div class="body">
+    <p>Each file exports what it shares, and other files import it.</p>
+<pre><code>// IncidentCard.jsx
+export default function IncidentCard() { }
+
+// App.jsx
+import IncidentCard from './IncidentCard';</code></pre>
+    <p class="inr"><b>In React:</b> every component lives in its own file and is imported where used.</p>
+    <p><a href="https://javascript.info/modules-intro" target="_blank" rel="noopener">Read more</a></p>
+    <label class="task"><input type="checkbox" data-k="j" data-i="8"><span>Revised</span></label>
+  </div></details>
+
+  <details id="j9"><summary><span class="num">9</span><span><strong>Callbacks and functions as values</strong></span></summary><div class="body">
+    <p>A function can be stored in a variable and passed to another function.</p>
+<pre><code>const handleClick = () =&gt; console.log('clicked');
+&lt;button onClick={handleClick}&gt;Save&lt;/button&gt;</code></pre>
+    <p>Pass <code>handleClick</code>, not <code>handleClick()</code>. With brackets it runs immediately.</p>
+    <p class="inr"><b>In React:</b> this is how a child component tells its parent that something happened.</p>
+    <p><a href="https://javascript.info/callbacks" target="_blank" rel="noopener">Read more</a></p>
+    <label class="task"><input type="checkbox" data-k="j" data-i="9"><span>Revised</span></label>
+  </div></details>
+
+  <details id="j10"><summary><span class="num">10</span><span><strong>Promises and async/await</strong></span></summary><div class="body">
+    <p>A promise is a value that arrives later. <code>await</code> pauses inside an <code>async</code> function until it arrives.</p>
+<pre><code>async function load() {
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.result;
+  } catch (err) {
+    console.error(err);
+  }
+}</code></pre>
+    <p class="inr"><b>In React:</b> all data loading. It replaces the <code>.then()</code> on <code>c.server.get()</code>.</p>
+    <p><a href="https://javascript.info/async-await" target="_blank" rel="noopener">Read more</a></p>
+    <label class="task"><input type="checkbox" data-k="j" data-i="10"><span>Revised</span></label>
+  </div></details>
+
+  <details id="j11"><summary><span class="num">11</span><span><strong>fetch</strong></span></summary><div class="body">
+    <p>The built-in way to call a REST API. It returns a promise.</p>
+<pre><code>const res = await fetch(
+  '/api/now/table/incident?sysparm_limit=10',
+  { headers: { 'Accept': 'application/json' } }
+);</code></pre>
+    <p><code>fetch</code> does not throw on a 404 or 500; check <code>res.ok</code> yourself.</p>
+    <p>On a ServiceNow React page, add the session token to the headers. ServiceNow's SDK guide requires it on every call:</p>
+<pre><code>headers: {
+  'Accept': 'application/json',
+  'X-UserToken': window.g_ck
+}</code></pre>
+    <p class="inr"><b>In React:</b> calling the Table API or a Scripted REST API.</p>
+    <p><a href="https://javascript.info/fetch" target="_blank" rel="noopener">Read more</a></p>
+    <label class="task"><input type="checkbox" data-k="j" data-i="11"><span>Revised</span></label>
+  </div></details>
+
+  <details id="j12"><summary><span class="num">12</span><span><strong>Closures</strong></span></summary><div class="body">
+    <p>A function remembers the variables from the place it was created.</p>
+<pre><code>function makeCounter() {
+  let count = 0;
+  return () =&gt; ++count;
+}</code></pre>
+    <p class="inr"><b>In React:</b> this explains why a handler sometimes sees an old state value. You only need the idea, not the theory.</p>
+    <p><a href="https://javascript.info/closure" target="_blank" rel="noopener">Read more</a></p>
+    <label class="task"><input type="checkbox" data-k="j" data-i="12"><span>Revised</span></label>
+  </div></details>
+
+  <div class="card"><h3>Things you can stop worrying about</h3><ul>
+    <li><code>this</code> and <code>.bind()</code>: function components do not use them.</li>
+    <li><code>var</code> and hoisting: use <code>const</code> and <code>let</code>.</li>
+    <li>Prototypes and classes: rarely needed in modern React.</li>
+    <li>jQuery-style DOM access: React updates the page for you.</li>
+  </ul></div>
+</section>
+
+<!-- ================= PROJECT ================= -->
+<section class="wrap" id="s-project" hidden>
+  <h2>Project: Incident Triage Board</h2>
+  <p class="mute">A small scoped app on a Personal Developer Instance whose UI is a React page. It covers the pieces an interviewer will ask about: components, state, data fetching, routing and the SDK workflow.</p>
+  <div class="card"><h3>What it does</h3><ul>
+    <li>Shows open incidents as cards in columns by state (New, In Progress, On Hold).</li>
+    <li>Filters by priority and assignment group, with a search box.</li>
+    <li>Opens a detail view at its own URL, such as <code>?view=detail&amp;id=INC0010001</code>.</li>
+    <li>Lets the user assign to themselves, change state and add a work note.</li>
+    <li>Shows a count of breached or high-priority incidents at the top.</li>
+  </ul></div>
+  <div class="card hi"><h3>Build order</h3><p class="mute">One item per session.</p>
+    <label class="task"><input type="checkbox" data-k="p" data-i="1"><span>Scaffold the app with the SDK React template and deploy the empty page</span></label>
+    <label class="task"><input type="checkbox" data-k="p" data-i="2"><span><code>IncidentCard</code> and <code>Column</code> components with mock data</span></label>
+    <label class="task"><input type="checkbox" data-k="p" data-i="3"><span><code>useIncidents</code> hook that reads from the Table API</span></label>
+    <label class="task"><input type="checkbox" data-k="p" data-i="4"><span>Filters and search held in state</span></label>
+    <label class="task"><input type="checkbox" data-k="p" data-i="5"><span>Detail view with its own URL</span></label>
+    <label class="task"><input type="checkbox" data-k="p" data-i="6"><span>Update actions (assign, state, work note) with loading and error states</span></label>
+    <label class="task"><input type="checkbox" data-k="p" data-i="7"><span>Scripted REST API that returns the summary counts, defined in Fluent</span></label>
+    <label class="task"><input type="checkbox" data-k="p" data-i="8"><span>README with screenshots, pushed to GitHub</span></label>
+  </div>
+  <div class="card"><h3>Stretch goal</h3><p>If you have a spare weekend: rebuild one of your existing Service Portal widgets as a React component and note what changed. That comparison makes a strong interview story.</p></div>
+</section>
+
+<!-- ================= VIDEOS ================= -->
+<section class="wrap" id="s-videos" hidden>
+  <h2>Videos and courses</h2>
+  <p class="mute">Use one interactive course as the spine for weeks 1 to 3, and the ServiceNow videos for week 4. Do not watch everything; pick the lessons that match the week's topics.</p>
+
+  <div class="card"><span class="tag">Week 1 &middot; Interactive, free, about 9 hours</span><h3>Scrimba Learn JavaScript</h3><p>Only the modules on arrays, objects, functions and async. Skip the DOM-heavy projects.</p><p><a href="https://scrimba.com/blog/best-react-courses-and-tutorials-compared" target="_blank" rel="noopener">Listed in Scrimba's course guide</a></p></div>
+  <div class="card hi"><span class="tag">Weeks 2 to 3 &middot; Interactive, free, about 15 hours</span><h3>Scrimba Learn React</h3><p>Main course. You edit code inside the video, so no setup. Stop after state, effects and forms.</p><p><a href="https://scrimba.com/learn/learnreact" target="_blank" rel="noopener">Open the course</a></p></div>
+  <div class="card"><span class="tag">Weeks 2 to 3 &middot; YouTube video</span><h3>freeCodeCamp Learn React</h3><p>Same instructor as the Scrimba course (Bob Ziroll), about 16 hours, for when you prefer plain video or are on your phone.</p><p><a href="https://www.freecodecamp.org/news/learn-react-2024/" target="_blank" rel="noopener">Open the course page</a></p></div>
+  <div class="card"><span class="tag">Week 4 &middot; YouTube, ServiceNow Developer Program</span><h3>ServiceNow IDE and Fluent live demo</h3><p>Watch once before installing the SDK to see the workflow end to end.</p><p><a href="https://youtube.com/live/PHFZBsbTTtI" target="_blank" rel="noopener">Watch</a></p></div>
+  <div class="card"><span class="tag">Week 4 &middot; YouTube</span><h3>First SDK episode on Creator Toolbox</h3><p>Background on how the SDK builds and installs an app.</p><p><a href="https://www.youtube.com/watch?v=7UWC4Pc5Q3E" target="_blank" rel="noopener">Watch</a></p></div>
+  <div class="card"><span class="tag">Weeks 4 to 6 &middot; YouTube playlist</span><h3>Creator Toolbox playlist</h3><p>Look for the newest SDK, Fluent and React episodes; older ones show earlier SDK versions.</p><p><a href="https://www.youtube.com/playlist?list=PL3rNcyAiDYK08_Xjuvu6IFEK8pqFT99WQ" target="_blank" rel="noopener">Open the playlist</a></p></div>
+
+  <p class="mute">Scrimba plus about 15 hours of React is more than weeks 2 and 3 allow. Treat the last third of the course (advanced projects) as optional.</p>
+
+  <div class="card"><h3>Reading</h3><ul>
+    <li><a href="https://react.dev/learn" target="_blank" rel="noopener">react.dev Learn</a>: the official tutorial. Do "Describing the UI", "Adding Interactivity" and "Managing State"; stop there.</li>
+    <li><a href="https://javascript.info" target="_blank" rel="noopener">javascript.info</a>: use it as a reference for the week 1 topics.</li>
+    <li><a href="https://www.servicenow.com/docs/r/zurich/application-development/building-applications/ui-development-react.html" target="_blank" rel="noopener">ServiceNow: UI development with React</a>: the platform workflow and limits.</li>
+    <li><a href="https://www.servicenow.com/docs/r/zurich/application-development/servicenow-sdk/fluent-ui-page-api.html" target="_blank" rel="noopener">ServiceNow Fluent UI Page API</a>: how the React page is registered.</li>
+    <li><a href="https://www.servicenow.com/docs/r/zurich/release-notes/servicenow-sdk-rn.html" target="_blank" rel="noopener">ServiceNow SDK release notes</a>: check these before week 4, since the SDK changes quickly.</li>
+  </ul></div>
+</section>
+
+<!-- ================= GUIDE ================= -->
+<section class="wrap" id="s-guide" hidden>
+  <h2>Where React fits in ServiceNow</h2>
+  <p>Service Portal widgets are still AngularJS. React comes in through the ServiceNow SDK and ServiceNow IDE, where you build a scoped app in source code and its UI is a React page. So the job skill is "React plus the ServiceNow SDK", not "React widgets".</p>
+
+  <div class="card"><span class="tag">Service Portal</span><h3>AngularJS widgets</h3><p>Your current skill stays valid. ServiceNow maintains its own AngularJS version.</p></div>
+  <div class="card hi"><span class="tag">ServiceNow SDK / IDE apps</span><h3>React, defined through the Fluent UI Page API</h3><p>The new skill to learn. This plan targets it.</p></div>
+  <div class="card"><span class="tag">UI Builder / Workspaces</span><h3>Next Experience components</h3><p>ServiceNow's own framework. Not React, but the component and state thinking carries over.</p></div>
+
+  <div class="card warn"><h3>Five platform facts</h3><ul>
+    <li>ServiceNow's docs label UI development with React an experimental feature, so expect details to change between releases.</li>
+    <li>Normal path-based routing is not available. ServiceNow's two sources disagree on the alternative: the product docs say only hash routing is supported, while the SDK's own guide says to use URL query parameters such as <code>?view=details&amp;id=123</code>, and not hash routing or React Router. Follow the pattern in the template you scaffold.</li>
+    <li>No server-side rendering and no React server components, so skip Next.js entirely.</li>
+    <li>The build uses Rollup, and CSS modules are not supported.</li>
+    <li>The SDK guide pins React 18.2 and writes components in TypeScript (<code>.tsx</code>), while the docs example uses plain <code>.jsx</code>. The docs say both are supported.</li>
+  </ul><p class="mute" style="margin-top:10px">Sources: <a href="https://www.servicenow.com/docs/r/zurich/application-development/building-applications/ui-development-react.html" target="_blank" rel="noopener">ServiceNow docs</a>, <a href="https://servicenow.github.io/sdk/guides/ui-page-guide" target="_blank" rel="noopener">SDK UI page guide</a></p></div>
+
+  <p>The React page talks to the instance over REST, mainly the Table API. ServiceNow's SDK guide requires every call to send the <code>X-UserToken</code> header with the value of <code>window.g_ck</code>. ServiceNow also ships a React component library (<code>@servicenow/react-components</code>) with ready-made record lists and forms, which that guide prefers over hand-built ones. Your server-side knowledge of GlideRecord, ACLs and Script Includes carries over unchanged.</p>
+
+  <h2>What you already know, translated</h2>
+  <p>Most widget concepts have a direct React equivalent. The real shift is one-way data flow: state changes re-render the UI, and there is no two-way binding or digest cycle.</p>
+  <div class="card"><table>
+    <tr><th>In a widget</th><th>In React</th></tr>
+    <tr><td>HTML template with <code>{{ }}</code></td><td>JSX with <code>{ }</code></td></tr>
+    <tr><td><code>c.data</code>, <code>$scope</code> variables</td><td><code>useState</code></td></tr>
+    <tr><td><code>ng-model</code> two-way binding</td><td><code>value</code> plus <code>onChange</code> (controlled input)</td></tr>
+    <tr><td><code>ng-repeat</code></td><td><code>array.map()</code> with a <code>key</code></td></tr>
+    <tr><td><code>ng-if</code>, <code>ng-show</code></td><td><code>condition &amp;&amp; &lt;div/&gt;</code> or a ternary</td></tr>
+    <tr><td><code>ng-click</code></td><td><code>onClick</code></td></tr>
+    <tr><td>Widget options, directive bindings</td><td>props</td></tr>
+    <tr><td><code>$watch</code>, controller init code</td><td><code>useEffect</code></td></tr>
+    <tr><td><code>c.server.get()</code>, <code>c.server.update()</code></td><td><code>fetch</code> to the Table API or a Scripted REST API</td></tr>
+    <tr><td>Server script</td><td>Scripted REST API plus Script Include</td></tr>
+    <tr><td><code>$rootScope.$broadcast</code></td><td>Lift state up, or Context</td></tr>
+    <tr><td>Angular providers / services</td><td>Custom hooks and plain JS modules</td></tr>
+    <tr><td>Embedded widgets</td><td>Child components</td></tr>
+  </table></div>
+
+  <h2>What to skip for now</h2>
+  <p class="mute">Common in React courses but not needed for ServiceNow work, so leave them until a job asks for them.</p>
+  <div class="card"><ul>
+    <li>Next.js, server components and server-side rendering (not supported on the platform)</li>
+    <li>Redux and other state libraries (<code>useState</code> plus Context is enough at this size)</li>
+    <li>Class components and lifecycle methods</li>
+    <li>Webpack or Rollup configuration (the SDK template handles the build)</li>
+    <li>Advanced TypeScript such as generics and utility types</li>
+    <li>Deep CSS frameworks; plain CSS imported in code is enough</li>
+  </ul></div>
+
+  <h2>How to talk about it in interviews</h2>
+  <p>Lead with the combination, since few candidates have both: five years of platform depth plus hands-on React through the SDK.</p>
+  <div class="card"><ul>
+    <li>Explain where React fits and where it does not, using the three cards at the top of this tab.</li>
+    <li>Walk through the project: scaffold, Fluent <code>UiPage</code>, build, install, REST calls.</li>
+    <li>Name the limits (no path-based routing, no SSR, experimental status) to show you have actually used it.</li>
+    <li>Compare a widget and a React component you built, and say what one-way data flow changed.</li>
+  </ul></div>
+
+  <p class="mute">Platform facts checked against ServiceNow's docs and SDK guide on 10 Nov 2026. React on ServiceNow is changing quickly, so re-check before an interview.</p>
+</section>
+
+</main>
+<nav id="nav"><a href="#plan">Plan</a><a href="#js">JS</a><a href="#project">Project</a><a href="#videos">Videos</a><a href="#guide">Guide</a></nav>
+<script>
+/* Progress lives in this phone's browser only: {w:{1:1}, j:{...}, p:{...}} */
+const N={w:6,j:12,p:8};
+let S={w:{},j:{},p:{}};
+try{const o=JSON.parse(localStorage.getItem('react6')||'{}');for(const k in N)if(o&&o[k]&&typeof o[k]==='object')S[k]=o[k]}catch(e){}
+const save=()=>{try{localStorage.setItem('react6',JSON.stringify(S))}catch(e){}};
+const cnt=k=>Object.keys(S[k]).length;
+function paint(){
+  document.querySelectorAll('input[data-k]').forEach(b=>{const on=!!S[b.dataset.k][b.dataset.i];b.checked=on;
+    const d=b.closest('details');if(d)d.classList.toggle('done',on)});
+  document.getElementById('pw').textContent=cnt('w')+' of 6 weeks';
+  document.getElementById('bar').style.width=(cnt('w')/6*100)+'%';
+  document.getElementById('sum').textContent=cnt('w')+' of 6 weeks done · '+cnt('j')+' of 12 JS concepts revised · '+cnt('p')+' of 8 project steps built';
+}
+document.querySelectorAll('input[data-k]').forEach(b=>b.onchange=()=>{
+  if(b.checked)S[b.dataset.k][b.dataset.i]=1;else delete S[b.dataset.k][b.dataset.i];save();paint()});
+paint();
+/* Open the first week and the first JS concept that are not ticked yet. */
+for(const [k,p] of [['w','w'],['j','j']]){for(let i=1;i<=N[k];i++){if(!S[k][i]){const d=document.getElementById(p+i);if(d)d.open=true;break}}}
+
+const TABS=['plan','js','project','videos','guide'];
+function route(){const h=(location.hash||'').slice(1),k=TABS.includes(h)?h:'plan';
+  TABS.forEach(t=>{document.getElementById('s-'+t).hidden=t!==k});
+  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+k));
+  document.querySelector('main').scrollTop=0}
+addEventListener('hashchange',route);route();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('../sw.js').catch(()=>{});
+(function(){const b=document.getElementById('th');if(!b)return;const r=document.documentElement;
+  const show=()=>{b.textContent=r.dataset.theme==='dark'?'☀ Bright':'☾ Dark'};
+  b.onclick=()=>{r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';try{localStorage.setItem('hubTheme',r.dataset.theme)}catch(e){}show()};show()})();
+</script>
+</body>
+</html>

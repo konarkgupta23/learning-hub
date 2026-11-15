@@ -38,11 +38,12 @@ a.tile:focus-visible,#th:focus-visible{outline:3px solid var(--yel);outline-offs
 <div class="flag"><div><span><h1>Learning Hub</h1><p>Pick what you want to learn today.</p></span><button id="th" type="button"></button></div></div>
 <main>
   <a class="tile" href="kannada/"><div class="badge">&#3221;</div><div><strong>Kannada in 90 Days</strong><span id="kn">Spoken Bengaluru Kannada: lessons, words, verbs, practice</span></div><div class="go">&#8250;</div></a>
-  <div class="tile soon"><div class="badge" style="background:var(--line)">R</div><div><strong>React</strong><span>Not added yet</span></div></div>
+  <a class="tile" href="react/"><div class="badge">R</div><div><strong>React for ServiceNow</strong><span id="rx">6-week plan, JavaScript revision, project, videos</span></div><div class="go">&#8250;</div></a>
   <p style="font-size:13px">Works offline after the first open.</p>
 </main>
 <script>
 try{const s=JSON.parse(localStorage.getItem('kn90')||'{}');if(s.xp)document.getElementById('kn').textContent=(s.streak||0)+' day streak \u00b7 '+s.xp+' XP \u00b7 '+Object.keys(s.done||{}).length+' of 12 weeks passed'}catch(e){}
+try{const r=JSON.parse(localStorage.getItem('react6')||'{}'),n=k=>Object.keys(r[k]||{}).length;if(n('w')+n('j')+n('p'))document.getElementById('rx').textContent=n('w')+' of 6 weeks \u00b7 '+n('j')+' of 12 JS concepts \u00b7 '+n('p')+' of 8 project steps'}catch(e){}
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 (function(){const b=document.getElementById('th');if(!b)return;const r=document.documentElement;
   const show=()=>{b.textContent=r.dataset.theme==='dark'?'\u2600 Bright':'\u263E Dark'};

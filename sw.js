@@ -1,6 +1,6 @@
 // Offline support. Bump VERSION on every release so phones pick up the new files.
-const VERSION='hub-v6';
-const SHELL=['./','index.html','kannada/','kannada/index.html','manifest.webmanifest','logo-192.png','logo-512.png','logo-maskable-512.png'];
+const VERSION='hub-v7';
+const SHELL=['./','index.html','kannada/','kannada/index.html','react/','react/index.html','manifest.webmanifest','logo-192.png','logo-512.png','logo-maskable-512.png'];
 // Always ask the server for a fresh copy (skip the browser's own 10-minute cache).
 const fresh=req=>fetch(req,{cache:'no-cache'});
 self.addEventListener('install',e=>{e.waitUntil(caches.open(VERSION).then(c=>Promise.all(SHELL.map(u=>fresh(u).then(r=>{if(r.ok)return c.put(u,r)})))).then(()=>self.skipWaiting()))});
