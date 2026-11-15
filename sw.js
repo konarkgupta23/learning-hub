@@ -1,5 +1,5 @@
 // Offline support. Bump VERSION on every release so phones pick up the new files.
-const VERSION='hub-v5';
+const VERSION='hub-v6';
 const SHELL=['./','index.html','kannada/','kannada/index.html','manifest.webmanifest','logo-192.png','logo-512.png','logo-maskable-512.png'];
 // Always ask the server for a fresh copy (skip the browser's own 10-minute cache).
 const fresh=req=>fetch(req,{cache:'no-cache'});
