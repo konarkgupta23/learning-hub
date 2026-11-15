@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learning Hub</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#c8102e">
+<link rel="icon" href="icon-192.png">
+<style>
+/* Layout idea: a plain launcher. One big tile per course, newest progress on the tile. */
+:root{--bg:#f7f5ee;--card:#fff;--ink:#2a1216;--mute:#75626a;--line:#e6dfcc;--red:#c8102e;--yel:#ffcd00}
+@media (prefers-color-scheme:dark){:root{--bg:#1a1013;--card:#27191d;--ink:#f6ecd9;--mute:#b9a5a6;--line:#3d2a2f;--red:#ff6278;color-scheme:dark}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.flag{height:6px;background:linear-gradient(var(--yel) 50%,var(--red) 50%)}
+main{max-width:560px;margin:auto;padding:24px 16px;display:flex;flex-direction:column;gap:14px}
+h1{font-size:28px;line-height:1.1;margin:8px 0 0}
+p{margin:0;color:var(--mute)}
+a.tile,div.tile{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;text-decoration:none;color:var(--ink)}
+a.tile:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+.badge{flex:none;width:56px;height:56px;border-radius:14px;display:grid;place-items:center;font-weight:800;font-size:22px;background:var(--yel);color:#2a1216}
+.tile strong{display:block;font-size:19px}
+.tile span{color:var(--mute);font-size:14px}
+.soon{opacity:.55}
+.go{margin-left:auto;color:var(--red);font-weight:700;font-size:22px}
+</style>
+</head>
+<body>
+<div class="flag"></div>
+<main>
+  <h1>Learning Hub</h1>
+  <p>Pick what you want to learn today.</p>
+  <a class="tile" href="kannada/"><div class="badge">&#3221;</div><div><strong>Kannada in 90 Days</strong><span id="kn">Spoken Bengaluru Kannada: lessons, words, verbs, practice</span></div><div class="go">&#8250;</div></a>
+  <div class="tile soon"><div class="badge" style="background:var(--line)">R</div><div><strong>React</strong><span>Not added yet</span></div></div>
+  <p style="font-size:13px">Works offline after the first open.</p>
+</main>
+<script>
+try{const s=JSON.parse(localStorage.getItem('kn90')||'{}');if(s.xp)document.getElementById('kn').textContent=(s.streak||0)+' day streak · '+s.xp+' XP · '+Object.keys(s.done||{}).length+' of 12 weeks passed'}catch(e){}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>

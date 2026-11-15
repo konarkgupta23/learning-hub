@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kannada in 90 Days</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#c8102e">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Tamma+2:wght@600;800&family=Anek+Kannada:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a one-screen phone app. Karnataka flag yellow and red carry the identity; every Kannada line is shown three ways (roman, Hindi letters, Kannada). */
+:root{
+  --bg:#f7f5ee; --card:#ffffff; --ink:#2a1216; --mute:#75626a; --line:#e6dfcc;
+  --red:#c8102e; --on-red:#ffffff; --yel:#ffcd00; --on-yel:#2a1216; --ok:#1b7f4d; --bad:#b3261e;
+  --disp:'Baloo Tamma 2','Anek Kannada',system-ui,sans-serif;
+  --body:'Anek Kannada','Noto Sans Kannada','Noto Sans Devanagari',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1a1013; --card:#27191d; --ink:#f6ecd9; --mute:#b9a5a6; --line:#3d2a2f;
+  --red:#ff6278; --on-red:#1a1013; --yel:#ffcd00; --on-yel:#1a1013; --ok:#5fd49a; --bad:#ff8a80; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1a1013; --card:#27191d; --ink:#f6ecd9; --mute:#b9a5a6; --line:#3d2a2f;
+  --red:#ff6278; --on-red:#1a1013; --yel:#ffcd00; --on-yel:#1a1013; --ok:#5fd49a; --bad:#ff8a80; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--body);display:flex;flex-direction:column}
+header{flex:none;background:var(--card);border-bottom:1px solid var(--line)}
+.flag{height:6px;background:linear-gradient(var(--yel) 50%,var(--red) 50%)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px;max-width:720px;margin:auto}
+.top h1{font:800 22px/1 var(--disp);margin:4px 0 0}
+.stats{display:flex;gap:8px;font-size:13px;font-variant-numeric:tabular-nums}
+.pill{background:var(--yel);color:var(--on-yel);border-radius:99px;padding:2px 10px;font-weight:700;white-space:nowrap}
+.pill.r{background:var(--red);color:var(--on-red)}
+main{flex:1;overflow-y:auto;padding:16px}
+.wrap{max-width:720px;margin:auto;display:flex;flex-direction:column;gap:14px}
+nav{flex:none;display:flex;background:var(--card);border-top:1px solid var(--line)}
+nav a{flex:1;text-align:center;padding:10px 0 12px;color:var(--mute);text-decoration:none;font:600 14px var(--disp);border-top:3px solid transparent}
+nav a.on{color:var(--red);border-top-color:var(--red)}
+h2{font:800 24px/1.15 var(--disp);margin:6px 0 0;text-wrap:balance}
+h3{font:800 18px/1.2 var(--disp);margin:0 0 6px}
+p{margin:0 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.hi{border-left:6px solid var(--yel)}
+.mute{color:var(--mute);font-size:14px}
+button,select{font:600 15px var(--body);color:var(--ink)}
+.btn{background:var(--red);color:var(--on-red);border:0;border-radius:10px;padding:10px 16px;cursor:pointer}
+.btn.y{background:var(--yel);color:var(--on-yel)}
+.btn.g{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+.ph{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.ph:first-of-type{border-top:0}
+.ph b{display:block;font-size:18px;line-height:1.3}
+.dv{display:block;font-size:15px;color:var(--red)}
+.kn{display:block;font-size:13px;color:var(--mute)}
+.ph i{display:block;font-style:normal;font-size:15px}
+.sp{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--yel);color:var(--on-yel);cursor:pointer;font-size:13px}
+.k{color:var(--red);font-weight:700;cursor:pointer;white-space:nowrap}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px}
+summary{padding:12px 14px;cursor:pointer;display:flex;gap:10px;align-items:center;list-style:none}
+summary::-webkit-details-marker{display:none}
+.num{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 15px var(--disp);background:var(--bg);border:2px solid var(--line)}
+.done .num{background:var(--ok);color:var(--card);border-color:var(--ok)}
+.cur .num{background:var(--yel);color:var(--on-yel);border-color:var(--yel)}
+summary strong{display:block;font:800 17px/1.2 var(--disp)}
+.body{padding:0 14px 14px;display:flex;flex-direction:column;gap:12px}
+.gb{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:15px}
+.gb h4{margin:0 0 4px;font:800 15px var(--disp)}
+.dlg{border-left:3px solid var(--red);padding-left:10px}
+.dlg .who{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.path{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.path a{text-decoration:none;color:var(--ink);text-align:center;font-size:12px}
+.path .num{margin:0 auto 2px}
+.task{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.task:first-of-type{border-top:0}
+.task input{width:22px;height:22px;accent-color:var(--red);flex:none}
+.task a{color:var(--red);font-weight:700;margin-left:auto;white-space:nowrap}
+.q{font-size:20px;margin:8px 0 12px}
+.q b{display:block;font-size:24px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;font-size:16px}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--card))}
+.opt.no{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--card))}
+.chips{display:flex;flex-wrap:wrap;gap:8px;min-height:46px;padding:8px;border:1.5px dashed var(--line);border-radius:10px;margin-bottom:10px}
+.chip{background:var(--yel);color:var(--on-yel);border:0;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:16px}
+.step{font-size:13px;color:var(--mute);margin:0}
+table{width:100%;border-collapse:collapse}
+td{padding:8px 4px;border-top:1px solid var(--line);vertical-align:top}
+td:first-child{width:38%;font-size:14px;color:var(--mute)}
+td b{font-size:18px}
+.tabs{display:flex;gap:6px;overflow-x:auto}
+.tabs button{flex:none;border:1.5px solid var(--line);background:var(--card);border-radius:99px;padding:6px 12px;cursor:pointer}
+.tabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+select{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:9px;max-width:100%}
+ul{margin:0;padding-left:20px} li{margin-bottom:6px}
+a{color:var(--red)}
+.tag{display:block;font-size:12px;color:var(--mute)}
+.fh{font:800 15px var(--disp);color:var(--red);margin:14px 0 0}
+.warn{border-left:6px solid var(--bad)}
+#pad{width:100%;max-width:520px;aspect-ratio:5/2;border:1.5px dashed var(--line);border-radius:10px;touch-action:none;background:var(--bg);display:block}
+.big{font-size:44px;line-height:1.3;margin:0}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--red)}
+@media (prefers-reduced-motion:no-preference){.opt,.chip,.btn{transition:transform .1s}.opt:active,.chip:active,.btn:active{transform:scale(.97)}}
+</style>
+</head>
+<body>
+<header><div class="flag"></div><div class="top"><h1><a href="../" style="color:var(--red);text-decoration:none;font-size:15px;margin-right:8px" aria-label="Back to menu">&#8249; Menu</a>Kannada in 90 Days</h1><div class="stats"><span class="pill r" id="st"></span><span class="pill" id="xp"></span></div></div></header>
+<main><div class="wrap" id="v"></div></main>
+<nav id="nav"><a href="#today">Today</a><a href="#course">Course</a><a href="#words">Words</a><a href="#verbs">Verbs</a><a href="#practice">Practice</a><a href="#guide">Guide</a></nav>
+<script>
+/* ---------- script helpers: Kannada -> roman and Hindi letters ---------- */
+const VW={'ಅ':'a','ಆ':'ā','ಇ':'i','ಈ':'ī','ಉ':'u','ಊ':'ū','ಋ':'ru','ಎ':'e','ಏ':'ē','ಐ':'ai','ಒ':'o','ಓ':'ō','ಔ':'au'};
+const MT={'ಾ':'ā','ಿ':'i','ೀ':'ī','ು':'u','ೂ':'ū','ೃ':'ru','ೆ':'e','ೇ':'ē','ೈ':'ai','ೊ':'o','ೋ':'ō','ೌ':'au'};
+const CN={'ಕ':'k','ಖ':'kh','ಗ':'g','ಘ':'gh','ಙ':'ṅ','ಚ':'ch','ಛ':'chh','ಜ':'j','ಝ':'jh','ಞ':'ñ','ಟ':'ṭ','ಠ':'ṭh','ಡ':'ḍ','ಢ':'ḍh','ಣ':'ṇ','ತ':'t','ಥ':'th','ದ':'d','ಧ':'dh','ನ':'n','ಪ':'p','ಫ':'f','ಬ':'b','ಭ':'bh','ಮ':'m','ಯ':'y','ರ':'r','ಲ':'l','ವ':'v','ಶ':'sh','ಷ':'sh','ಸ':'s','ಹ':'h','ಳ':'ḷ'};
+function rom(s){let o='';const a=[...s];for(let i=0;i<a.length;i++){const c=a[i],n=a[i+1];
+  if(CN[c]){o+=CN[c];if(n==='್')i++;else if(MT[n]){o+=MT[n];i++}else o+='a'}
+  else if(VW[c])o+=VW[c];
+  else if(c==='ಂ'){const k=CN[n]||'';o+=/^[pbfm]/.test(k)?'m':/^[ṭḍ]/.test(k)?'ṇ':k?'n':'m'}
+  else if(c==='ಃ')o+='h';else o+=c}
+  return o}
+function dev(s){return [...s].map(c=>{let k=c.codePointAt(0);if(k<0xC80||k>0xCFF)return c;
+  k={0xC8E:0xC8F,0xC92:0xC93,0xCC6:0xCC7,0xCCA:0xCCB}[k]||k;return String.fromCodePoint(k-0x380)}).join('')}
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const ph=(k,e)=>`<div class="ph"><button class="sp" data-say="${k}" aria-label="Listen">&#9654;</button><div><b>${rom(k)}</b><span class="dv">${dev(k)}</span><span class="kn">${k}</span><i>${esc(e)}</i></div></div>`;
+const G=h=>h.replace(/\{([^}]+)\}/g,(m,k)=>`<span class="k" data-say="${k}">${rom(k)}</span>`);
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const $=s=>document.querySelector(s);
+
+/* ---------- audio: phone's Kannada voice, else Claude voice, else Hindi voice reading Hindi letters ---------- */
+let ctts=null;
+try{if(window.claude&&claude.use)claude.use('tts').then(t=>{ctts=t}).catch(()=>{})}catch(e){}
+function say(k){try{
+  const ss=window.speechSynthesis,vs=ss?ss.getVoices():[];
+  const kv=vs.find(v=>/^kn/i.test(v.lang)),hv=vs.find(v=>/^hi/i.test(v.lang));
+  const dev1=(t,l,v)=>{const u=new SpeechSynthesisUtterance(t);u.lang=l;if(v)u.voice=v;u.rate=.8;ss.cancel();ss.speak(u)};
+  if(kv)return dev1(k,'kn-IN',kv);
+  if(ctts)return ctts.speak(k,{language:'kn',rate:.85}).catch(()=>{});
+  if(hv)return dev1(dev(k),'hi-IN',hv);
+  if(ss)dev1(k,'kn-IN');
+}catch(e){}}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-say]');if(t)say(t.dataset.say)});
+
+/* ---------- course data ---------- */
+const W=[
+{t:"Hello, Bengaluru",goal:"Greet people, introduce yourself, say yes, no and thanks.",
+ g:[["Think in Hindi, not English","Kannada word order is the same as Hindi: doer, thing, action. {ನಾನು ಕಾಫಿ ಕುಡಿತೀನಿ} = मैं कॉफ़ी पीता हूँ."],
+    ["No है needed","{ನನ್ನ ಹೆಸರು ರವಿ} = मेरा नाम रवि. Kannada simply drops the है."],
+    ["आप by default","Use {ನೀವು} (आप) with everyone except close friends. {ನೀನು} is तुम/तू."]],
+ p:[["ನಮಸ್ಕಾರ","Hello"],["ಹೇಗಿದೀರ?","How are you? (polite)"],["ಚೆನ್ನಾಗಿದೀನಿ","I am fine"],["ನಿಮ್ಮ ಹೆಸರು ಏನು?","What is your name?"],["ನನ್ನ ಹೆಸರು ಕೋನಾರ್ಕ್","My name is Konark"],["ಹೌದು","Yes"],["ಇಲ್ಲ","No"],["ಧನ್ಯವಾದ","Thank you"],["ಸರಿ","Okay / correct"],["ಊಟ ಆಯ್ತಾ?","Had your meal? (the classic local greeting)"],["ಆಯ್ತು","Done / okay"],["ನನಗೆ ಕನ್ನಡ ಸ್ವಲ್ಪ ಸ್ವಲ್ಪ ಬರುತ್ತೆ","I know a little Kannada"],["ನಾನು ಕನ್ನಡ ಕಲಿತಾ ಇದೀನಿ","I am learning Kannada"],["ಬರ್ತೀನಿ","Bye (literally: I will come back)"]],
+ d:[["A","ನಮಸ್ಕಾರ, ಹೇಗಿದೀರ?","Hello, how are you?"],["B","ಚೆನ್ನಾಗಿದೀನಿ. ನೀವು?","I am fine. You?"],["A","ನಾನೂ ಚೆನ್ನಾಗಿದೀನಿ. ನಿಮ್ಮ ಹೆಸರು ಏನು?","I am fine too. What is your name?"],["B","ನನ್ನ ಹೆಸರು ರವಿ. ಊಟ ಆಯ್ತಾ?","My name is Ravi. Had your meal?"],["A","ಆಯ್ತು. ನಿಮ್ದು?","Yes. And yours?"]],
+ m:"Greet one person a day in Kannada: the security guard, a cab driver, a colleague. Use namaskāra and ūṭa āytā?"},
+{t:"This, that, who, where",goal:"Ask simple questions and say what exists and what does not.",
+ g:[["Pronouns","{ನಾನು} मैं · {ನೀನು} तुम · {ನೀವು} आप · {ಅವನು} वह (लड़का) · {ಅವಳು} वह (लड़की) · {ಅವರು} वे, or one person with respect · {ಅದು} वह (चीज़) · {ನಾವು} हम"],
+    ["The i / a / e trick","i- is near, a- is far, e- or y- asks. {ಇದು} यह · {ಅದು} वह · {ಇಲ್ಲಿ} यहाँ · {ಅಲ್ಲಿ} वहाँ · {ಎಲ್ಲಿ} कहाँ · {ಈಗ} अब · {ಆಗ} तब · {ಯಾವಾಗ} कब · {ಇಷ್ಟು} इतना · {ಅಷ್ಟು} उतना · {ಎಷ್ಟು} कितना · {ಹೀಗೆ} ऐसे · {ಹಾಗೆ} वैसे · {ಹೇಗೆ} कैसे"],
+    ["More question words","{ಏನು} क्या · {ಯಾರು} कौन · {ಯಾಕೆ} क्यों · {ಯಾವುದು} कौन सा"],
+    ["Yes/no questions","Add -ā to the last word. {ಇದೆ} है → {ಇದೆಯಾ?} है क्या? · {ಬೇಕು} → {ಬೇಕಾ?} · {ಗೊತ್ತು} → {ಗೊತ್ತಾ?}"],
+    ["है and नहीं है","{ಇದೆ} = है (it exists, it is there). {ಇಲ್ಲ} = नहीं है."]],
+ p:[["ಇದು ಏನು?","What is this?"],["ಅವರು ಯಾರು?","Who is that person?"],["ನೀವು ಎಲ್ಲಿ ಇದೀರ?","Where are you?"],["ನಾನು ಮನೆಯಲ್ಲಿ ಇದೀನಿ","I am at home"],["ಇಲ್ಲಿ ಬನ್ನಿ","Please come here"],["ಅಲ್ಲಿ ನೋಡಿ","Look there"],["ಇದು ನನ್ನದು","This is mine"],["ಇದು ನಿಮ್ಮದಾ?","Is this yours?"],["ಯಾವಾಗ ಬರ್ತೀರ?","When will you come?"],["ಇದು ಎಷ್ಟು?","How much is this?"],["ನೀರು ಇದೆಯಾ?","Is there water?"],["ನನಗೆ ಗೊತ್ತಿಲ್ಲ","I don't know"],["ನನಗೆ ಗೊತ್ತು","I know"],["ಯಾಕೆ?","Why?"]],
+ m:"Point at five things at home and ask yourself idu ēnu? Then ask one real person one real question, for example nīru ideyā?"},
+{t:"I want, I don't want",goal:"Order food, shop, count money.",
+ g:[["मुझे forms","{ನನಗೆ} मुझे · {ನಿನಗೆ} तुम्हें · {ನಿಮಗೆ} आपको · {ಅವನಿಗೆ} उसे (m) · {ಅವಳಿಗೆ} उसे (f) · {ಅವರಿಗೆ} उन्हें · {ನಮಗೆ} हमें"],
+    ["चाहिए = bēku","{ನನಗೆ ನೀರು ಬೇಕು} = मुझे पानी चाहिए, word for word. {ಬೇಡ} = नहीं चाहिए."],
+    ["Same pattern, three more","{ನನಗೆ ಗೊತ್ತು} मुझे पता है · {ನನಗೆ ಇಷ್ಟ} मुझे पसंद है · {ನನಗೆ ಸಾಕು} मेरे लिए बस"]],
+ p:[["ನನಗೆ ಒಂದು ಕಾಫಿ ಬೇಕು","I want one coffee"],["ನಿಮಗೆ ಏನು ಬೇಕು?","What do you want?"],["ಬೇಡ","Don't want / no thanks"],["ಸಕ್ಕರೆ ಬೇಡ","No sugar"],["ಇದು ಎಷ್ಟು ಆಗುತ್ತೆ?","How much does this come to?"],["ಸ್ವಲ್ಪ ಕಡಿಮೆ ಮಾಡಿ","Please reduce it a little"],["ತುಂಬಾ ಜಾಸ್ತಿ","Too much"],["ಇನ್ನೊಂದು ಕೊಡಿ","Give one more"],["ಚಿಲ್ಲರೆ ಇದೆಯಾ?","Do you have change?"],["ಸಾಕು","Enough"],["ಬಿಲ್ ಕೊಡಿ","Please give the bill"],["ಎರಡು ಮಸಾಲೆ ದೋಸೆ ಕೊಡಿ","Give two masala dosas"]],
+ x:[["ಒಂದು","1"],["ಎರಡು","2"],["ಮೂರು","3"],["ನಾಲ್ಕು","4"],["ಐದು","5"],["ಆರು","6"],["ಏಳು","7"],["ಎಂಟು","8"],["ಒಂಬತ್ತು","9"],["ಹತ್ತು","10"],["ಇಪ್ಪತ್ತು","20"],["ಮೂವತ್ತು","30"],["ಐವತ್ತು","50"],["ನೂರು","100"],["ಇನ್ನೂರು","200"],["ಐನೂರು","500"],["ಸಾವಿರ","1000"]],
+ d:[["You","ಒಂದು ಮಸಾಲೆ ದೋಸೆ, ಒಂದು ಕಾಫಿ ಕೊಡಿ","One masala dosa and one coffee, please"],["Staff","ಇಲ್ಲೇ ತಿಂತೀರಾ, ಪಾರ್ಸೆಲ್ಲಾ?","Eating here or parcel?"],["You","ಇಲ್ಲೇ. ಎಷ್ಟು ಆಯ್ತು?","Here. How much?"],["Staff","ತೊಂಬತ್ತು ರೂಪಾಯಿ","Ninety rupees"],["You","ತಗೊಳಿ. ಧನ್ಯವಾದ","Here you go. Thanks"]],
+ m:"Order one full meal or coffee using only Kannada. Ask the price with eshṭu āytu?"},
+{t:"Verbs: now and later",goal:"Say what you do, and what you will do. One tense covers both.",
+ g:[["The endings","I -tīni · you -tīya · आप -tīra · he -tāne · she -tāḷe · they -tāre · we -tīvi · it -utte. {ಮಾಡ್ತೀನಿ} · {ಮಾಡ್ತೀರ} · {ಮಾಡ್ತಾನೆ} · {ಮಾಡ್ತಾಳೆ} · {ಮಾಡ್ತಾರೆ} · {ಮಾಡ್ತೀವಿ}"],
+    ["Easier than Hindi","No करता / करती. A man and a woman both say {ಮಾಡ್ತೀನಿ}. Gender shows only for he and she."],
+    ["Drop the pronoun","{ಬರ್ತೀನಿ} alone already means I will come."],
+    ["māḍu = करना","{ಕೆಲಸ ಮಾಡು} काम करना · {ಊಟ ಮಾಡು} खाना खाना · {ಸ್ನಾನ ಮಾಡು} नहाना · {ಫೋನ್ ಮಾಡು} · {ಬುಕ್ ಮಾಡು} · {ಪೇ ಮಾಡು}. Any English verb plus māḍu works."],
+    ["Practise","Open the Verbs tab and drill 10 a day from this week onward."]],
+ p:[["ನಾನು ಆಫೀಸಿಗೆ ಹೋಗ್ತೀನಿ","I go to office / I will go to office"],["ನೀವು ಏನು ಮಾಡ್ತೀರ?","What do you do?"],["ನಾನು ಐಟಿಯಲ್ಲಿ ಕೆಲಸ ಮಾಡ್ತೀನಿ","I work in IT"],["ಅವನು ನಾಳೆ ಬರ್ತಾನೆ","He will come tomorrow"],["ಅವಳು ಕನ್ನಡ ಮಾತಾಡ್ತಾಳೆ","She speaks Kannada"],["ಅವರು ಟೀ ಕುಡಿತಾರೆ","They drink tea"],["ನಾವು ಸಿನಿಮಾ ನೋಡ್ತೀವಿ","We will watch a movie"],["ಬಸ್ ಯಾವಾಗ ಬರುತ್ತೆ?","When does the bus come?"],["ನಾನು ಆಮೇಲೆ ಫೋನ್ ಮಾಡ್ತೀನಿ","I will call later"],["ನೀನು ಎಲ್ಲಿ ಹೋಗ್ತೀಯ?","Where are you going? (to a friend)"],["ನಾನು ಈಗ ಬರ್ತೀನಿ","I will come now"],["ನಾಳೆ ಸಿಗ್ತೀನಿ","I will meet you tomorrow"]],
+ m:"Tell someone three things you will do today, each ending in -tīni."},
+{t:"To, in, from: getting around",goal:"Direct an auto or cab and ask where things are.",
+ g:[["Postpositions are glued on","को → {-ಗೆ}: {ಮನೆಗೆ} घर को · {ಆಫೀಸಿಗೆ} · {ಬೆಂಗಳೂರಿಗೆ}. Words ending in -a take -kke: {ಇಂದಿರಾನಗರಕ್ಕೆ}."],
+    ["में and से","में → -alli: {ಮನೆಯಲ್ಲಿ} · {ಆಫೀಸಲ್ಲಿ}. से → -inda: {ಮನೆಯಿಂದ} · {ಇಲ್ಲಿಂದ} यहाँ से."],
+    ["का and के साथ","{ನನ್ನ} मेरा · {ನಿಮ್ಮ} आपका · {ಅವರ} उनका. के साथ → {ಜೊತೆ}: {ನನ್ನ ಜೊತೆ} मेरे साथ."],
+    ["Direction words","{ಮುಂದೆ} आगे · {ಹಿಂದೆ} पीछे · {ಎಡ} बायाँ · {ಬಲ} दायाँ · {ನೇರ} सीधा · {ಹತ್ತಿರ} पास · {ದೂರ} दूर · {ಒಳಗೆ} अंदर · {ಹೊರಗೆ} बाहर · {ಮೇಲೆ} ऊपर · {ಕೆಳಗೆ} नीचे"]],
+ p:[["ಇಂದಿರಾನಗರಕ್ಕೆ ಬರ್ತೀರಾ?","Will you come to Indiranagar?"],["ಮೀಟರ್ ಹಾಕಿ","Please put the meter on"],["ನೇರ ಹೋಗಿ","Go straight"],["ಎಡಕ್ಕೆ ತಿರುಗಿ","Turn left"],["ಬಲಕ್ಕೆ ತಿರುಗಿ","Turn right"],["ಇಲ್ಲೇ ನಿಲ್ಲಿಸಿ","Stop right here"],["ಸ್ವಲ್ಪ ಮುಂದೆ","A little ahead"],["ಮೆಟ್ರೋ ಸ್ಟೇಷನ್ ಎಲ್ಲಿದೆ?","Where is the metro station?"],["ಇಲ್ಲಿಂದ ಎಷ್ಟು ದೂರ?","How far from here?"],["ಹತ್ತಿರ ಇದೆ","It is near"],["ನಾನು ಬೆಂಗಳೂರಲ್ಲಿ ಇರ್ತೀನಿ","I live in Bengaluru"],["ನನ್ನ ಜೊತೆ ಬನ್ನಿ","Come with me"]],
+ d:[["You","ಕೋರಮಂಗಲಕ್ಕೆ ಬರ್ತೀರಾ?","Will you come to Koramangala?"],["Driver","ಬರ್ತೀನಿ. ಇನ್ನೂರು ಆಗುತ್ತೆ","I will. It will be two hundred"],["You","ತುಂಬಾ ಜಾಸ್ತಿ. ಮೀಟರ್ ಹಾಕಿ","Too much. Put the meter on"],["Driver","ಸರಿ, ಕೂತ್ಕೊಳಿ","Okay, sit"],["You","ಮುಂದೆ ಎಡಕ್ಕೆ ತಿರುಗಿ, ಇಲ್ಲೇ ನಿಲ್ಲಿಸಿ","Turn left ahead, stop right here"]],
+ m:"Give every direction to your next auto or cab driver in Kannada."},
+{t:"Verbs: what happened",goal:"Talk about yesterday.",
+ g:[["Past endings","I -e · आप -ri · he (nothing) · she -lu · they -ru · we -vi. {ಮಾಡಿದೆ} मैंने किया · {ಮಾಡಿದ್ರಿ} · {ಮಾಡಿದ} · {ಮಾಡಿದ್ಲು} · {ಮಾಡಿದ್ರು} · {ಮಾಡಿದ್ವಿ}"],
+    ["Regular and irregular","Most verbs add -ida. Learn these by heart: {ಹೋದೆ} गया · {ಬಂದೆ} आया · {ತಿಂದೆ} खाया · {ಕೊಟ್ಟೆ} दिया · {ತಗೊಂಡೆ} लिया · {ಇದ್ದೆ} था · {ಎದ್ದೆ} उठा · {ನಿಂತೆ} रुका · {ಆಯ್ತು} हो गया"],
+    ["Easier than Hindi","No ने, and the verb always follows the doer. मैंने रोटी खाई and मैंने चावल खाया are both just {ತಿಂದೆ}."],
+    ["Did you?","Add -ā: {ಮಾಡಿದ್ರಾ?} · {ಬಂದ್ರಾ?} · {ತಿಂದ್ರಾ?}"]],
+ p:[["ನಾನು ನಿನ್ನೆ ಮೈಸೂರಿಗೆ ಹೋದೆ","I went to Mysuru yesterday"],["ಊಟ ಮಾಡಿದ್ರಾ?","Did you eat?"],["ಹೌದು, ಮಾಡಿದೆ","Yes, I did"],["ಅವರು ಯಾವಾಗ ಬಂದ್ರು?","When did they come?"],["ನಾನು ಅವನಿಗೆ ಹೇಳಿದೆ","I told him"],["ಏನು ಆಯ್ತು?","What happened?"],["ಕೆಲಸ ಮುಗೀತು","The work is finished"],["ನಾನು ಆ ಸಿನಿಮಾ ನೋಡಿದೆ","I saw that film"],["ಅವಳು ಕಾಫಿ ಕುಡಿದ್ಲು","She drank coffee"],["ನೀವು ಎಲ್ಲಿ ಇದ್ರಿ?","Where were you?"],["ನಾನು ಮನೆಯಲ್ಲಿ ಇದ್ದೆ","I was at home"],["ಮರೆತು ಹೋದೆ","I forgot"]],
+ m:"Each night this week, say aloud three things you did that day."},
+{t:"No, not, can't, I like",goal:"Refuse, deny, and talk about likes and ability.",
+ g:[["Won't / don't","Root + -alla, same for every person: {ಬರಲ್ಲ} · {ಮಾಡಲ್ಲ} · {ಹೋಗಲ್ಲ}"],
+    ["Didn't","-lilla, same for every person: {ಬರ್ಲಿಲ್ಲ} · {ಮಾಡ್ಲಿಲ್ಲ} · {ಹೋಗ್ಲಿಲ್ಲ}"],
+    ["illa or alla?","{ಇಲ್ಲ} = नहीं है, not there. {ಅಲ್ಲ} = is not that thing. {ಅವನು ಇಲ್ಲಿ ಇಲ್ಲ} he is not here. {ಇದು ಕಾಫಿ ಅಲ್ಲ} this is not coffee."],
+    ["Can and can't","Verb + -akke + {ಆಗುತ್ತೆ} or {ಆಗಲ್ಲ}: {ಬರಕ್ಕೆ ಆಗುತ್ತೆ} आ सकता हूँ · {ಬರಕ್ಕೆ ಆಗಲ್ಲ} नहीं आ सकता. For skills: {ನನಗೆ ಕನ್ನಡ ಬರುತ್ತೆ} मुझे कन्नड़ आती है."]],
+ p:[["ನಾನು ಬರಲ್ಲ","I won't come"],["ನನಗೆ ಅರ್ಥ ಆಗ್ಲಿಲ್ಲ","I didn't understand"],["ಅರ್ಥ ಆಯ್ತು","Understood"],["ನನಗೆ ಕನ್ನಡ ಚೆನ್ನಾಗಿ ಬರಲ್ಲ","I don't know Kannada well"],["ನನಗೆ ದೋಸೆ ತುಂಬಾ ಇಷ್ಟ","I like dosa a lot"],["ನನಗೆ ಇದು ಇಷ್ಟ ಇಲ್ಲ","I don't like this"],["ಅವನು ಇಲ್ಲಿ ಇಲ್ಲ","He is not here"],["ಇದು ನನ್ನದು ಅಲ್ಲ","This is not mine"],["ನನಗೆ ಇವತ್ತು ಬರಕ್ಕೆ ಆಗಲ್ಲ","I can't come today"],["ಪರವಾಗಿಲ್ಲ","No problem"],["ಚಿಂತೆ ಮಾಡ್ಬೇಡಿ","Don't worry"],["ನಾನು ಇನ್ನೂ ತಿಂದಿಲ್ಲ","I haven't eaten yet"]],
+ d:[["Colleague","ಇವತ್ತು ಸಂಜೆ ಪಾರ್ಟಿಗೆ ಬರ್ತೀರಾ?","Coming to the party this evening?"],["You","ಇಲ್ಲ, ನನಗೆ ಬರಕ್ಕೆ ಆಗಲ್ಲ. ಕೆಲಸ ಇದೆ","No, I can't come. I have work"],["Colleague","ಪರವಾಗಿಲ್ಲ. ನಾಳೆ ಊಟಕ್ಕೆ ಹೋಗೋಣ?","No problem. Shall we go for lunch tomorrow?"],["You","ಆಯ್ತು, ನಾಳೆ ಖಂಡಿತ ಬರ್ತೀನಿ","Okay, I will definitely come tomorrow"]],
+ m:"Retire the phrase Kannada gottilla. From now on say nanage kannaḍa swalpa swalpa barutte."},
+{t:"Please do, let's, I have to",goal:"Ask people to do things, suggest plans, state needs.",
+ g:[["Commands","To friends, the bare verb: {ಬಾ} · {ಹೋಗು} · {ಮಾಡು}. To आप, add -i: {ಬನ್ನಿ} · {ಹೋಗಿ} · {ಮಾಡಿ}"],
+    ["Don't","{ಮಾಡ್ಬೇಡ} (तुम) · {ಮಾಡ್ಬೇಡಿ} (आप)"],
+    ["Have to","-bēku: {ಹೋಗ್ಬೇಕು} जाना है · {ಮಾಡ್ಬೇಕು} करना है"],
+    ["Let's and shall I","-ōṇa: {ಹೋಗೋಣ} चलें · {ನೋಡೋಣ} देखते हैं · {ಮಾಡೋಣ}. -lā: {ಬರ್ಲಾ?} आऊँ? · {ಮಾಡ್ಲಾ?} करूँ?"],
+    ["May","-bahudu: {ಹೋಗಬಹುದು} जा सकते हैं"]],
+ p:[["ಸ್ವಲ್ಪ ನಿಧಾನವಾಗಿ ಮಾತಾಡಿ","Please speak slowly"],["ಇನ್ನೊಂದು ಸಲ ಹೇಳಿ","Please say it once more"],["ಕೂತ್ಕೊಳಿ","Please sit"],["ಒಂದು ನಿಮಿಷ ಇರಿ","Wait a minute"],["ನಾನು ಈಗ ಹೋಗ್ಬೇಕು","I have to go now"],["ಊಟಕ್ಕೆ ಹೋಗೋಣ","Let's go for lunch"],["ನಾನು ಒಳಗೆ ಬರ್ಲಾ?","May I come in?"],["ಇಲ್ಲಿ ಗಾಡಿ ನಿಲ್ಲಿಸ್ಬೇಡಿ","Don't park the vehicle here"],["ನನಗೆ ಸ್ವಲ್ಪ ಸಹಾಯ ಮಾಡಿ","Please help me a little"],["ಬಾಗಿಲು ಮುಚ್ಚಿ","Close the door"],["ನೀವು ಇಲ್ಲಿ ಕೂರಬಹುದು","You can sit here"],["ಬೇಗ ಬನ್ನಿ","Come quickly"],["ಕನ್ನಡದಲ್ಲಿ ಮಾತಾಡಿ, ನಾನು ಕಲಿಬೇಕು","Speak in Kannada, I need to learn"]],
+ m:"Ask one Kannada-speaking colleague or friend: kannaḍadalli mātāḍi, nānu kalibēku. This one sentence gets you free daily practice."},
+{t:"Right now, and when",goal:"Describe what is happening, tell the time, plan your day.",
+ g:[["Right now","Verb + -tā + the है form: {ಮಾಡ್ತಾ ಇದೀನಿ} कर रहा हूँ · {ಮಾಡ್ತಾ ಇದೀರ} · {ಮಾಡ್ತಾ ಇದಾನೆ} · {ಮಾಡ್ತಾ ಇದೆ}"],
+    ["Time words","{ಇವತ್ತು} आज · {ನಾಳೆ} आने वाला कल · {ನಿನ್ನೆ} बीता कल · {ಈಗ} अभी · {ಆಮೇಲೆ} बाद में · {ಬೆಳಿಗ್ಗೆ} सुबह · {ಮಧ್ಯಾಹ್ನ} दोपहर · {ಸಂಜೆ} शाम · {ರಾತ್ರಿ} रात"],
+    ["At 5 o'clock","Number + {ಗಂಟೆಗೆ}: {ಐದು ಗಂಟೆಗೆ}. Days of the week are almost the same as Hindi."]],
+ p:[["ಏನು ಮಾಡ್ತಾ ಇದೀರ?","What are you doing?"],["ನಾನು ಕೆಲಸ ಮಾಡ್ತಾ ಇದೀನಿ","I am working"],["ಗಂಟೆ ಎಷ್ಟು ಆಯ್ತು?","What time is it?"],["ಐದು ಗಂಟೆಗೆ ಬರ್ತೀನಿ","I will come at five"],["ನಾನು ಬೆಳಿಗ್ಗೆ ಆರು ಗಂಟೆಗೆ ಏಳ್ತೀನಿ","I get up at six in the morning"],["ಇವತ್ತು ರಜೆ","Today is a holiday"],["ನಾಳೆ ಸಿಗೋಣ","Let's meet tomorrow"],["ಮಳೆ ಬರ್ತಾ ಇದೆ","It is raining"],["ಸಂಜೆ ಫ್ರೀ ಇದೀರಾ?","Are you free in the evening?"],["ಸ್ವಲ್ಪ ಲೇಟ್ ಆಗುತ್ತೆ","It will get a little late"],["ಹತ್ತು ನಿಮಿಷದಲ್ಲಿ ಬರ್ತೀನಿ","I will come in ten minutes"]],
+ x:[["ಸೋಮವಾರ","Monday"],["ಮಂಗಳವಾರ","Tuesday"],["ಬುಧವಾರ","Wednesday"],["ಗುರುವಾರ","Thursday"],["ಶುಕ್ರವಾರ","Friday"],["ಶನಿವಾರ","Saturday"],["ಭಾನುವಾರ","Sunday"]],
+ d:[["Friend","ಹಲೋ, ಏನು ಮಾಡ್ತಾ ಇದೀರ?","Hello, what are you doing?"],["You","ಕೆಲಸ ಮಾಡ್ತಾ ಇದೀನಿ. ನೀವು?","I am working. You?"],["Friend","ನಾನು ಮನೆಗೆ ಹೋಗ್ತಾ ಇದೀನಿ. ಸಂಜೆ ಸಿಗೋಣ?","I am going home. Shall we meet in the evening?"],["You","ಆಯ್ತು, ಆರು ಗಂಟೆಗೆ ಬರ್ತೀನಿ","Okay, I will come at six"]],
+ m:"Narrate your own actions under your breath for five minutes a day: kāfi kuḍitā idīni, āfīsige hōgtā idīni."},
+{t:"People, family, feelings",goal:"Talk about your people, describe things, say how you feel.",
+ g:[["Possessives","{ನನ್ನ} मेरा · {ನಿನ್ನ} तुम्हारा · {ನಿಮ್ಮ} आपका · {ಅವನ} · {ಅವಳ} · {ಅವರ} · {ನಮ್ಮ} हमारा, as in {ನಮ್ಮ ಬೆಂಗಳೂರು} and {ನಮ್ಮ ಮೆಟ್ರೋ}"],
+    ["Adjectives never change","No अच्छा / अच्छी. {ದೊಡ್ಡ ಮನೆ} बड़ा घर · {ಚಿಕ್ಕ} छोटा · {ಒಳ್ಳೆ} अच्छा · {ಹೊಸ} नया · {ಹಳೆ} पुराना · {ತುಂಬಾ} बहुत"],
+    ["I have, I feel","Both use {ನನಗೆ}, like मुझे भूख लगी है. For people you have, use {ಇದಾನೆ}, {ಇದಾಳೆ}, {ಇದಾರೆ}."],
+    ["Than","-ginta works like comparison से: {ಅದಕ್ಕಿಂತ} उससे"]],
+ p:[["ನಿಮ್ಮ ಊರು ಯಾವುದು?","Which is your home town?"],["ನಿಮ್ಮ ಮನೆಯಲ್ಲಿ ಯಾರು ಯಾರು ಇದಾರೆ?","Who all are in your family?"],["ನನಗೆ ಒಬ್ಬ ಅಣ್ಣ ಇದಾನೆ","I have an elder brother"],["ಇವರು ನನ್ನ ಫ್ರೆಂಡ್","This is my friend"],["ನನಗೆ ಹಸಿವು ಆಗ್ತಾ ಇದೆ","I am hungry"],["ನನಗೆ ತುಂಬಾ ಖುಷಿ ಆಯ್ತು","I am very happy"],["ಊಟ ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ","The food is very good"],["ಇದು ತುಂಬಾ ದೊಡ್ಡದು","This is very big"],["ಇವತ್ತು ತುಂಬಾ ಸೆಕೆ","It is very hot today"],["ನನಗೆ ಸುಸ್ತು ಆಗಿದೆ","I am tired"],["ನಿಮ್ಮ ಮದುವೆ ಆಗಿದೆಯಾ?","Are you married?"],["ಇದು ಅದಕ್ಕಿಂತ ಚೆನ್ನಾಗಿದೆ","This is better than that"]],
+ x:[["ಅಪ್ಪ","father"],["ಅಮ್ಮ","mother"],["ಅಣ್ಣ","elder brother"],["ಅಕ್ಕ","elder sister"],["ತಮ್ಮ","younger brother"],["ತಂಗಿ","younger sister"],["ಗಂಡ","husband"],["ಹೆಂಡತಿ","wife"],["ಮಗ","son"],["ಮಗಳು","daughter"],["ಅಜ್ಜ","grandfather"],["ಅಜ್ಜಿ","grandmother"]],
+ m:"Introduce your family to someone in five Kannada sentences."},
+{t:"And, but, because, if",goal:"Join short sentences into real speech.",
+ g:[["Connectors","{ಮತ್ತೆ} और · {ಆದ್ರೆ} लेकिन · {ಯಾಕಂದ್ರೆ} क्योंकि · {ಅದಕ್ಕೆ} इसलिए · {ಅಥವಾ} या"],
+    ["If","Past stem + -re: {ಬಂದ್ರೆ} अगर आए तो · {ಮಾಡಿದ್ರೆ} · {ಇದ್ರೆ} · {ಹೋದ್ರೆ}"],
+    ["anta = कि","It comes after the quoted part: {ಬರ್ತೀನಿ ಅಂತ ಹೇಳಿದ್ರು} = आऊँगा, ऐसा कहा."],
+    ["To do, after doing","-akke: {ನೋಡಕ್ಕೆ} देखने के लिए · {ಕಲಿಯಕ್ಕೆ} सीखने के लिए. -mēle: {ಆದ್ಮೇಲೆ} होने के बाद · {ಬಂದ್ಮೇಲೆ} आने के बाद"]],
+ p:[["ನಾನು ಬರ್ತೀನಿ, ಆದ್ರೆ ಸ್ವಲ್ಪ ಲೇಟ್ ಆಗುತ್ತೆ","I will come, but it will be a little late"],["ಮಳೆ ಬಂದ್ರೆ ನಾನು ಬರಲ್ಲ","If it rains I won't come"],["ಟ್ರಾಫಿಕ್ ಇತ್ತು, ಅದಕ್ಕೆ ಲೇಟ್ ಆಯ್ತು","There was traffic, so I got late"],["ಅವರು ನಾಳೆ ಬರ್ತೀನಿ ಅಂತ ಹೇಳಿದ್ರು","He said he will come tomorrow"],["ಊಟ ಆದ್ಮೇಲೆ ಫೋನ್ ಮಾಡ್ತೀನಿ","I will call after lunch"],["ನಾನು ಕನ್ನಡ ಕಲಿಯಕ್ಕೆ ಬಂದೆ","I came to learn Kannada"],["ನಿಮಗೆ ಟೈಮ್ ಇದ್ರೆ ಬನ್ನಿ","Come if you have time"],["ನನಗೆ ಇಷ್ಟ, ಯಾಕಂದ್ರೆ ಅದು ಸುಲಭ","I like it because it is easy"],["ಕಾಫಿ ಬೇಕಾ, ಟೀ ಬೇಕಾ?","Do you want coffee or tea?"],["ಏನು ಅಂದ್ರಿ?","What did you say?"],["ಇದು ಸರಿ ಅಂತ ನನಗೆ ಅನ್ಸುತ್ತೆ","I feel this is right"],["ಗೊತ್ತಾದ್ರೆ ಹೇಳ್ತೀನಿ","I will tell you if I find out"]],
+ m:"Tell a one-minute story about your day using ādre, adakke and yākandre at least once each."},
+{t:"Sound like a local",goal:"Hold a full casual conversation and keep it going.",
+ g:[["Street speed","Vowels drop when people speak fast: {ಏನು} becomes {ಏನ್}. The textbook {ಮಾಡುತ್ತೇನೆ} is the street {ಮಾಡ್ತೀನಿ}. You have been learning the street form all along."],
+    ["Fillers that buy time","{ಅಲ್ವಾ?} है ना? · {ಹೌದಾ?} अच्छा? · {ಮತ್ತೆ?} और? · {ಸರಿ ಸರಿ} ठीक ठीक"],
+    ["After week 12","Pick one person and one fixed slot a day where you speak only Kannada. That habit is what turns this into fluency."]],
+ p:[["ಏನ್ ಸಮಾಚಾರ?","What's up?"],["ಏನಿಲ್ಲ, ಎಲ್ಲಾ ಆರಾಮ","Nothing much, all good"],["ಸಕ್ಕತ್!","Awesome!"],["ಬೊಂಬಾಟ್!","Fantastic!"],["ಏನ್ ಗುರು?","What's up, boss?"],["ಸ್ವಲ್ಪ ಅಡ್ಜಸ್ಟ್ ಮಾಡಿ","Please adjust a little"],["ಹೌದಾ?","Is that so?"],["ಆಮೇಲೆ ನೋಡೋಣ","Let's see later"],["ತಲೆ ಕೆಡಿಸ್ಕೊಬೇಡ","Don't stress about it"],["ನಿಮ್ಮನ್ನ ಭೇಟಿ ಆಗಿ ತುಂಬಾ ಖುಷಿ ಆಯ್ತು","Very happy to meet you"],["ನಾನು ಮೂರು ತಿಂಗಳಿಂದ ಕನ್ನಡ ಕಲಿತಾ ಇದೀನಿ","I have been learning Kannada for three months"],["ತಪ್ಪಾದ್ರೆ ತಿದ್ದಿ","Correct me if I am wrong"],["ಕನ್ನಡ ಗೊತ್ತಾ?","Do you know Kannada?"],["ಮತ್ತೆ ಸಿಗೋಣ","See you again"]],
+ d:[["Neighbour","ನಿಮಗೆ ಕನ್ನಡ ಬರುತ್ತಾ?","Do you know Kannada?"],["You","ಸ್ವಲ್ಪ ಸ್ವಲ್ಪ ಬರುತ್ತೆ. ಮೂರು ತಿಂಗಳಿಂದ ಕಲಿತಾ ಇದೀನಿ","A little. I have been learning for three months"],["Neighbour","ಸಕ್ಕತ್! ತುಂಬಾ ಚೆನ್ನಾಗಿ ಮಾತಾಡ್ತೀರ","Awesome! You speak very well"],["You","ಧನ್ಯವಾದ. ತಪ್ಪಾದ್ರೆ ತಿದ್ದಿ","Thank you. Correct me if I am wrong"],["Neighbour","ಖಂಡಿತ. ಕಾಫಿ ಕುಡಿಯೋಣ ಬನ್ನಿ","Sure. Come, let's have coffee"]],
+ m:"Have one ten-minute conversation with no Hindi or English. Mistakes allowed, switching not allowed."}
+];
+
+
+/* ---------- word packs: everyday Bengaluru speech ---------- */
+const WP=[
+{t:"All-day words",n:"The small words that glue every sentence. You already know {ಬೇಕು}, {ಕೊಡಿ} and {ತಗೊಳಿ}. These are the next layer.",i:[["ಇನ್ನೂ","still / more"],["ಮತ್ತೆ","again / and then"],["ಈಗ","now"],["ಆಮೇಲೆ","later"],["ಬೇಗ","quickly / early"],["ನಿಧಾನ","slowly"],["ಸ್ವಲ್ಪ","a little"],["ತುಂಬಾ","very / a lot"],["ಜಾಸ್ತಿ","more / too much"],["ಕಮ್ಮಿ","less (street form of kaḍime)"],["ಎಲ್ಲಾ","all / everything"],["ಏನೂ ಇಲ್ಲ","nothing"],["ಯಾರೂ ಇಲ್ಲ","nobody"],["ಅಷ್ಟೇ","that's all"],["ಸುಮ್ನೆ","simply / for no reason"],["ಹಾಗಾದ್ರೆ","in that case"],["ಅಂದ್ರೆ","meaning / that is"],["ಖಂಡಿತ","definitely"],["ಇರಬಹುದು","maybe / could be"],["ಸಿಕ್ಕಾಪಟ್ಟೆ","extremely / loads of"],["ಗೊತ್ತಾಯ್ತಾ?","Got it?"],["ಗೊತ್ತಾಯ್ತು","Got it"],["ಅಲ್ವಾ?","isn't it?"],["ಏನ್ ಮಾಡೋದು?","What to do?"]]},
+{t:"Street talk",n:"How friends, colleagues and shopkeepers actually talk. Bengaluru Kannada mixes English freely, so English noun + {ಮಾಡಿ} is always safe.",i:[["ಏನ್ ಮಗಾ?","What's up, bro? (friends only)"],["ಮಚ್ಚಾ","bro / dude"],["ಗುರು","boss / dude"],["ಅಣ್ಣ","brother: polite way to address a driver or shopkeeper"],["ಅಕ್ಕ","sister: polite way to address a woman"],["ಸಾರ್","sir"],["ತಿಂಡಿ ಆಯ್ತಾ?","Had breakfast?"],["ಮಸ್ತ್","great"],["ಚಿಂದಿ","awesome (slang)"],["ಬೇಜಾರು","bored / upset"],["ಟೆನ್ಷನ್ ಬೇಡ","No tension"],["ಲೈಟ್ ತಗೊ","Take it lightly"],["ಹೋಗ್ಲಿ ಬಿಡಿ","Let it go"],["ಕಿರಿಕ್","trouble / nuisance"],["ಕಿರಿಕ್ ಮಾಡ್ಬೇಡ","Don't create trouble"],["ಸುಮ್ನಿರು","Keep quiet / stay calm"],["ನಡಿ ಹೋಗೋಣ","Come on, let's go"],["ನೋಡ್ಕೊಂಡು ಹೋಗಿ","Go carefully"],["ಒನ್ ಬೈ ಟು ಕಾಫಿ","One coffee split into two cups"],["ಸಿಕ್ಕಾಪಟ್ಟೆ ಟ್ರಾಫಿಕ್","Crazy traffic"],["ಸ್ವಲ್ಪ ಸೈಡ್ ಕೊಡಿ","Give a little way"],["ಬುಕ್ ಮಾಡಿ","Please book it"],["ಆನ್ ಮಾಡಿ","Switch it on"],["ಆಫ್ ಮಾಡಿ","Switch it off"],["ತೋರಿಸಿ","Please show"],["ತಗೊಂಡು ಬನ್ನಿ","Please bring it"],["ಮರೀಬೇಡಿ","Don't forget"]]},
+{t:"Food",i:[["ನೀರು","water"],["ಊಟ","meal (lunch or dinner)"],["ತಿಂಡಿ","breakfast / snack"],["ಅನ್ನ","cooked rice"],["ಸಾರು","rasam / thin curry"],["ಪಲ್ಯ","dry vegetable side"],["ಮೊಸರು","curd"],["ಹಾಲು","milk"],["ಸಕ್ಕರೆ","sugar"],["ಉಪ್ಪು","salt"],["ಖಾರ","spicy"],["ಸಿಹಿ","sweet"],["ಬಿಸಿ","hot"],["ತಣ್ಣಗೆ","cold"],["ಹಣ್ಣು","fruit"],["ತರಕಾರಿ","vegetables"],["ಮೊಟ್ಟೆ","egg"],["ರುಚಿ ಇದೆ","It is tasty"],["ಖಾರ ಕಮ್ಮಿ ಮಾಡಿ","Make it less spicy"],["ಇನ್ನೂ ಸ್ವಲ್ಪ ಹಾಕಿ","Serve a little more"],["ಸಾಕು ಸಾಕು","Enough, enough"],["ಬಿಸಿ ನೀರು ಕೊಡಿ","Give hot water"]]},
+{t:"Home and city",i:[["ಮನೆ","house / home"],["ಬಾಗಿಲು","door"],["ಕಿಟಕಿ","window"],["ಬೀಗ","lock"],["ಕೆಲಸ","work / job"],["ದುಡ್ಡು","money"],["ಬಾಡಿಗೆ","rent"],["ಸಂಬಳ","salary"],["ಅಂಗಡಿ","shop"],["ರಸ್ತೆ","road"],["ಗಾಡಿ","vehicle"],["ಊರು","town / native place"],["ಜನ","people"],["ಮಳೆ","rain"],["ಬಿಸಿಲು","sun / heat"],["ಚಳಿ","cold weather"],["ಕಸ","garbage"],["ಕರೆಂಟ್ ಇಲ್ಲ","No power"],["ನೀರು ಬರ್ತಾ ಇಲ್ಲ","Water is not coming"],["ಮೀಟಿಂಗ್ ಇದೆ","There is a meeting"],["ಬಾಡಿಗೆ ಎಷ್ಟು?","How much is the rent?"]]},
+{t:"Describing",i:[["ಚೆನ್ನಾಗಿದೆ","It is good"],["ಚೆನ್ನಾಗಿಲ್ಲ","It is not good"],["ದೊಡ್ಡ","big"],["ಚಿಕ್ಕ","small"],["ಹೊಸ","new"],["ಹಳೆ","old"],["ಒಳ್ಳೆ","good (person or thing)"],["ಕೆಟ್ಟ","bad"],["ಸುಲಭ","easy"],["ಕಷ್ಟ","difficult"],["ದೂರ","far"],["ಹತ್ತಿರ","near"],["ದುಬಾರಿ","expensive"],["ಖಾಲಿ","empty / free"],["ಸರಿ ಇಲ್ಲ","Not right / not working"],["ತುಂಬಾ ಕಷ್ಟ","Very difficult"]]},
+{t:"Insults",w:1,n:"For recognising, not for using. Tone matters: {ನೀನು} from a stranger, or {ಲೋ} and {ಲೇ} tacked onto a sentence, already signal disrespect. Between close friends the mild ones are often jokes.",i:[["ಮೂರ್ಖ","idiot (mild)"],["ದಡ್ಡ","dumb, slow (mild)"],["ಪೆದ್ದ","fool (mild)"],["ಗೂಬೆ","idiot, literally owl (mild, very common)"],["ಮಂಗ","monkey, fool (mild)"],["ಕತ್ತೆ","donkey (mild)"],["ಕೋತಿ","monkey (mild)"],["ಎಮ್ಮೆ","buffalo: lazy or thick (mild)"],["ಹುಚ್ಚ","madman (mild to medium)"],["ತರ್ಲೆ","pest, mischief-maker (mild, often fond)"],["ತಲೆ ಇಲ್ವಾ?","Don't you have a brain?"],["ಬುದ್ಧಿ ಇಲ್ವಾ?","Don't you have any sense?"],["ಬಾಯಿ ಮುಚ್ಚು","Shut your mouth"],["ಮುಚ್ಕೊಂಡು ಹೋಗು","Shut up and go"],["ಥೂ","spitting sound: disgust"],["ನಾಯಿ","dog (medium)"],["ಹಂದಿ","pig (medium)"],["ಕಳ್ಳ","thief"],["ಸುಳ್ಳ","liar"],["ಹಲ್ಕಾ","cheap, lowlife (medium)"],["ಕಚಡ","filthy, scum (medium)"],["ದರಿದ್ರ","wretched (medium)"],["ಲೋಫರ್","loafer, good-for-nothing (medium)"],["ಬೇವರ್ಸಿ","worthless bastard (strong)"],["ಬಡ್ಡಿ ಮಗ","strong abuse, sometimes thrown around casually"],["ಬೋಳಿ ಮಗ","very strong abuse"],["ಸೂಳೆ ಮಗ","very strong abuse: son of a prostitute"],["ನಿನ್ನಮ್ಮನ್","start of abuse about your mother: the most serious kind. Walk away."]]},
+{t:"Threats",w:1,n:"If you hear these said in anger, do not argue. Step back, move towards people, and call 112 if you feel unsafe.",i:[["ಹೊಡಿತೀನಿ","I will hit you"],["ಒದಿತೀನಿ","I will kick you"],["ಸಾಯಿಸ್ತೀನಿ","I will kill you"],["ಕೈ ಕಾಲು ಮುರಿತೀನಿ","I will break your hands and legs"],["ನಿನ್ನ ಬಿಡಲ್ಲ","I won't spare you"],["ನೋಡ್ಕೊತೀನಿ","I will deal with you"],["ಹೊರಗೆ ಬಾ","Come outside"],["ಗೊತ್ತಾ ನಾನು ಯಾರು ಅಂತ?","Do you know who I am?"],["ಜಾಸ್ತಿ ಮಾತಾಡ್ಬೇಡ","Don't talk too much"],["ಏನ್ ಲೋ?","What, you? (aggressive)"],["ಹುಷಾರ್!","Watch it! / Careful!"],["ಇಲ್ಲಿಂದ ಹೋಗು","Get out of here"],["ತೊಲಗು","Get lost"],["ದುಡ್ಡು ತೆಗಿ","Take out the money"],["ಫೋನ್ ಕೊಡು","Hand over the phone"],["ಯಾರಿಗೂ ಹೇಳ್ಬೇಡ","Don't tell anyone"]]},
+{t:"About you",w:1,n:"Things said nearby on the assumption that you do not understand. {ಇವನು} means this guy, {ಅವನು} means that guy.",i:[["ಇವನಿಗೆ ಕನ್ನಡ ಬರಲ್ಲ","This guy doesn't know Kannada"],["ಇವನಿಗೆ ಗೊತ್ತಾಗಲ್ಲ","He won't understand / won't find out"],["ಹೊರಗಿನವನು","outsider"],["ಹಿಂದಿಯವನು","Hindi guy"],["ಜಾಸ್ತಿ ಹೇಳು","Quote more"],["ಡಬಲ್ ಹೇಳು","Quote double"],["ಯಾಮಾರಿಸು","trick him, fool him"],["ಬಕ್ರಾ ಸಿಕ್ಕಿದ","We found a sucker"],["ಇವನು ಯಾರು?","Who is this guy?"],["ಅವನ್ನ ನೋಡು","Look at him"],["ಇವನಿಗೆ ತಲೆ ಇಲ್ಲ","He has no brains"],["ಇವನ ಹತ್ರ ದುಡ್ಡು ಇದೆ","He has money on him"]]},
+{t:"Calm replies",n:"Short lines that end a situation without raising it. Always use the polite {-ಇ} forms here.",i:[["ನನಗೆ ಕನ್ನಡ ಅರ್ಥ ಆಗುತ್ತೆ","I understand Kannada"],["ಮರ್ಯಾದೆ ಕೊಟ್ಟು ಮಾತಾಡಿ","Speak with respect"],["ಸರಿಯಾಗಿ ಮಾತಾಡಿ","Speak properly"],["ಜಗಳ ಬೇಡ","No fighting"],["ಹೋಗ್ಲಿ ಬಿಡಿ","Let it go"],["ನನ್ನ ತಪ್ಪು ಇಲ್ಲ","It is not my fault"],["ಸಾರಿ, ಗೊತ್ತಾಗ್ಲಿಲ್ಲ","Sorry, I didn't realise"],["ಮೀಟರ್ ಪ್ರಕಾರ ಕೊಡ್ತೀನಿ","I will pay by the meter"],["ಅಷ್ಟು ಕೊಡಲ್ಲ","I won't pay that much"],["ನಾನು ಪೊಲೀಸಿಗೆ ಫೋನ್ ಮಾಡ್ತೀನಿ","I will call the police"]]}
+];
+
+/* ---------- verbs ---------- */
+const PR=[['ನಾನು','I · मैं'],['ನೀನು','you, casual · तुम'],['ನೀವು','you, polite · आप'],['ಅವನು','he'],['ಅವಳು','she'],['ಅವರು','they, or he/she with respect'],['ಅದು','it'],['ನಾವು','we · हम']];
+const PE=['ೀನಿ','ೀಯ','ೀರ','ಾನೆ','ಾಳೆ','ಾರೆ',null,'ೀವಿ'], PA=['ೆ','ೆ','್ರಿ','','್ಲು','್ರು',null,'್ವಿ'];
+const IRU=['ಇದೀನಿ','ಇದೀಯ','ಇದೀರ','ಇದಾನೆ','ಇದಾಳೆ','ಇದಾರೆ','ಇದೆ','ಇದೀವಿ'];
+const VB=[ // root, English, Hindi, present stem, it-present, past stem, it-past, won't, didn't, please, short past stem
+['ಮಾಡು','do','करना','ಮಾಡ್ತ','ಮಾಡುತ್ತೆ','ಮಾಡಿದ','ಮಾಡಿತು','ಮಾಡಲ್ಲ','ಮಾಡ್ಲಿಲ್ಲ','ಮಾಡಿ'],
+['ಹೋಗು','go','जाना','ಹೋಗ್ತ','ಹೋಗುತ್ತೆ','ಹೋದ','ಹೋಯ್ತು','ಹೋಗಲ್ಲ','ಹೋಗ್ಲಿಲ್ಲ','ಹೋಗಿ'],
+['ಬಾ','come','आना','ಬರ್ತ','ಬರುತ್ತೆ','ಬಂದ','ಬಂತು','ಬರಲ್ಲ','ಬರ್ಲಿಲ್ಲ','ಬನ್ನಿ'],
+['ಇರು','be, stay','होना, रहना','ಇದ','ಇದೆ','ಇದ್ದ','ಇತ್ತು','ಇಲ್ಲ','ಇರ್ಲಿಲ್ಲ','ಇರಿ','ಇದ'],
+['ನೋಡು','see, watch','देखना','ನೋಡ್ತ','ನೋಡುತ್ತೆ','ನೋಡಿದ','ನೋಡಿತು','ನೋಡಲ್ಲ','ನೋಡ್ಲಿಲ್ಲ','ನೋಡಿ'],
+['ತಿನ್ನು','eat','खाना','ತಿಂತ','ತಿನ್ನುತ್ತೆ','ತಿಂದ','ತಿಂತು','ತಿನ್ನಲ್ಲ','ತಿನ್ಲಿಲ್ಲ','ತಿನ್ನಿ'],
+['ಕುಡಿ','drink','पीना','ಕುಡಿತ','ಕುಡಿಯುತ್ತೆ','ಕುಡಿದ','ಕುಡಿಯಿತು','ಕುಡಿಯಲ್ಲ','ಕುಡಿಲಿಲ್ಲ','ಕುಡಿಯಿರಿ'],
+['ಕೊಡು','give','देना','ಕೊಡ್ತ','ಕೊಡುತ್ತೆ','ಕೊಟ್ಟ','ಕೊಟ್ಟಿತು','ಕೊಡಲ್ಲ','ಕೊಡ್ಲಿಲ್ಲ','ಕೊಡಿ','ಕೊಟ'],
+['ತಗೊ','take','लेना','ತಗೊತ','ತಗೊಳ್ಳುತ್ತೆ','ತಗೊಂಡ','ತಗೊಂಡಿತು','ತಗೊಳಲ್ಲ','ತಗೊಳ್ಲಿಲ್ಲ','ತಗೊಳಿ'],
+['ಹೇಳು','say, tell','कहना, बताना','ಹೇಳ್ತ','ಹೇಳುತ್ತೆ','ಹೇಳಿದ','ಹೇಳಿತು','ಹೇಳಲ್ಲ','ಹೇಳ್ಲಿಲ್ಲ','ಹೇಳಿ'],
+['ಕೇಳು','ask, listen','पूछना, सुनना','ಕೇಳ್ತ','ಕೇಳುತ್ತೆ','ಕೇಳಿದ','ಕೇಳಿತು','ಕೇಳಲ್ಲ','ಕೇಳ್ಲಿಲ್ಲ','ಕೇಳಿ'],
+['ಮಾತಾಡು','speak, talk','बात करना','ಮಾತಾಡ್ತ','ಮಾತಾಡುತ್ತೆ','ಮಾತಾಡಿದ','ಮಾತಾಡಿತು','ಮಾತಾಡಲ್ಲ','ಮಾತಾಡ್ಲಿಲ್ಲ','ಮಾತಾಡಿ'],
+['ಕಲಿ','learn','सीखना','ಕಲಿತ','ಕಲಿಯುತ್ತೆ','ಕಲಿತ','ಕಲಿಯಿತು','ಕಲಿಯಲ್ಲ','ಕಲಿಲಿಲ್ಲ','ಕಲಿಯಿರಿ'],
+['ಓದು','read, study','पढ़ना','ಓದ್ತ','ಓದುತ್ತೆ','ಓದಿದ','ಓದಿತು','ಓದಲ್ಲ','ಓದ್ಲಿಲ್ಲ','ಓದಿ'],
+['ಮಲಗು','sleep, lie down','सोना','ಮಲಗ್ತ','ಮಲಗುತ್ತೆ','ಮಲಗಿದ','ಮಲಗಿತು','ಮಲಗಲ್ಲ','ಮಲಗ್ಲಿಲ್ಲ','ಮಲಗಿ'],
+['ಏಳು','get up','उठना','ಏಳ್ತ','ಏಳುತ್ತೆ','ಎದ್ದ','ಎದ್ದಿತು','ಏಳಲ್ಲ','ಏಳ್ಲಿಲ್ಲ','ಏಳಿ','ಎದ'],
+['ನಿಲ್ಲು','stop, stand','रुकना, खड़ा होना','ನಿಲ್ತ','ನಿಲ್ಲುತ್ತೆ','ನಿಂತ','ನಿಂತಿತು','ನಿಲ್ಲಲ್ಲ','ನಿಲ್ಲಿಲ್ಲ','ನಿಲ್ಲಿ'],
+['ಕಳಿಸು','send','भेजना','ಕಳಿಸ್ತ','ಕಳಿಸುತ್ತೆ','ಕಳಿಸಿದ','ಕಳಿಸಿತು','ಕಳಿಸಲ್ಲ','ಕಳಿಸ್ಲಿಲ್ಲ','ಕಳಿಸಿ'],
+['ಬಿಡು','leave, let go','छोड़ना','ಬಿಡ್ತ','ಬಿಡುತ್ತೆ','ಬಿಟ್ಟ','ಬಿಟ್ಟಿತು','ಬಿಡಲ್ಲ','ಬಿಡ್ಲಿಲ್ಲ','ಬಿಡಿ','ಬಿಟ'],
+['ಕಾಯು','wait','इंतज़ार करना','ಕಾಯ್ತ','ಕಾಯುತ್ತೆ','ಕಾದ','ಕಾದಿತು','ಕಾಯಲ್ಲ','ಕಾಯ್ಲಿಲ್ಲ','ಕಾಯಿರಿ'],
+['ಹಾಕು','put','डालना, रखना','ಹಾಕ್ತ','ಹಾಕುತ್ತೆ','ಹಾಕಿದ','ಹಾಕಿತು','ಹಾಕಲ್ಲ','ಹಾಕ್ಲಿಲ್ಲ','ಹಾಕಿ'],
+['ಆಗು','happen, become','होना, हो जाना','ಆಗ್ತ','ಆಗುತ್ತೆ','ಆದ','ಆಯ್ತು','ಆಗಲ್ಲ','ಆಗ್ಲಿಲ್ಲ','ಆಗಿ'],
+['ಹುಡುಕು','search','ढूँढना','ಹುಡುಕ್ತ','ಹುಡುಕುತ್ತೆ','ಹುಡುಕಿದ','ಹುಡುಕಿತು','ಹುಡುಕಲ್ಲ','ಹುಡುಕ್ಲಿಲ್ಲ','ಹುಡುಕಿ'],
+['ಆಡು','play','खेलना','ಆಡ್ತ','ಆಡುತ್ತೆ','ಆಡಿದ','ಆಡಿತು','ಆಡಲ್ಲ','ಆಡ್ಲಿಲ್ಲ','ಆಡಿ']
+].map(a=>({r:a[0],en:a[1],hi:a[2],ps:a[3],pa:a[4],s:a[5],sa:a[6],n:a[7],pn:a[8],im:a[9],s2:a[10]}));
+const TN=['Now / will','Past','Right now','Have done','Not, please, must'];
+const partOf=v=>v.r==='ಹೋಗು'?'ಹೋಗಿ':v.r==='ಆಗು'?'ಆಗಿ':(/ಿದ$/.test(v.s)&&!/ಿ$/.test(v.r))?v.s.slice(0,-1):v.s+'ು';
+// Hindi side of each verb: stem, perfective, polite command, future, intransitive?, sample object (Kannada, Hindi)
+const HX=[['कर','किया','कीजिए','करूँगा',0,'ಕೆಲಸ','काम'],['जा','गया','जाइए','जाऊँगा',1,'ಮನೆಗೆ','घर'],['आ','आया','आइए','आऊँगा',1,'ಆಫೀಸಿಗೆ','ऑफ़िस'],null,['देख','देखा','देखिए','देखूँगा',0,'ಟೀವಿ','टीवी'],['खा','खाया','खाइए','खाऊँगा',0,'ದೋಸೆ','डोसा'],['पी','पिया','पीजिए','पिऊँगा',0,'ನೀರು','पानी'],['दे','दिया','दीजिए','दूँगा',0,'ಬಿಲ್','बिल'],['ले','लिया','लीजिए','लूँगा',0,'ಟಿಕೆಟ್','टिकट'],['बोल','बोला','बोलिए','बोलूँगा',1,'ನಿಜ','सच'],['पूछ','पूछा','पूछिए','पूछूँगा',0,'ದಾರಿ','रास्ता'],['बात कर','बात की','बात कीजिए','बात करूँगा',0,'ಕನ್ನಡದಲ್ಲಿ','कन्नड़ में'],['सीख','सीखा','सीखिए','सीखूँगा',0,'ಕೆಲಸ','काम'],['पढ़','पढ़ा','पढ़िए','पढ़ूँगा',0,'ಪೇಪರ್','अख़बार'],['सो','सोया','सोइए','सोऊँगा',1,'ಬೇಗ','जल्दी'],['उठ','उठा','उठिए','उठूँगा',1,'ಬೇಗ','जल्दी'],['रुक','रुका','रुकिए','रुकूँगा',1,'ಇಲ್ಲಿ','यहाँ'],['भेज','भेजा','भेजिए','भेजूँगा',0,'ಮೆಸೇಜ್','मैसेज'],['छोड़','छोड़ा','छोड़िए','छोड़ूँगा',0,'ಕೆಲಸ','काम'],['इंतज़ार कर','इंतज़ार किया','इंतज़ार कीजिए','इंतज़ार करूँगा',0,'ಇಲ್ಲಿ','यहाँ'],['डाल','डाला','डालिए','डालूँगा',0,'ಉಪ್ಪು','नमक'],['हो','हुआ','होइए','होऊँगा',1,'ಲೇಟ್','लेट'],['ढूँढ','ढूँढा','ढूँढिए','ढूँढूँगा',0,'ಮನೆ','घर'],['खेल','खेला','खेलिए','खेलूँगा',0,'ಕ್ರಿಕೆಟ್','क्रिकेट']];
+const IRUF=[['Tell someone'],['bare verb','to a friend','ಇಲ್ಲೇ ಇರು','यहीं रह / रुक'],['-i','to आप','ಇಲ್ಲೇ ಇರಿ','यहीं रहिए'],['-bēḍi',"please don't",'ಇಲ್ಲಿ ಇರ್ಬೇಡಿ','यहाँ मत रहिए'],
+['When'],['idīni','am, right now','ನಾನು ಮನೆಯಲ್ಲಿ ಇದೀನಿ','मैं घर में हूँ'],['-tīni','usually am, will be','ನಾನು ಮನೆಯಲ್ಲಿ ಇರ್ತೀನಿ','मैं घर में रहता हूँ / रहूँगा'],['-e (past)','was','ನಾನು ಮನೆಯಲ್ಲಿ ಇದ್ದೆ','मैं घर में था'],['-tidde','used to be','ನಾನು ಮನೆಯಲ್ಲಿ ಇರ್ತಿದ್ದೆ','मैं घर में रहता था'],
+['Not'],['illa','am not, is not there','ನಾನು ಮನೆಯಲ್ಲಿ ಇಲ್ಲ','मैं घर में नहीं हूँ'],['-alla',"won't be",'ನಾನು ಮನೆಯಲ್ಲಿ ಇರಲ್ಲ','मैं घर में नहीं रहूँगा'],['-lilla',"wasn't",'ನಾನು ಮನೆಯಲ್ಲಿ ಇರ್ಲಿಲ್ಲ','मैं घर में नहीं था'],
+['Need and can'],['-bēku','have to be','ನಾನು ಮನೆಯಲ್ಲಿ ಇರ್ಬೇಕು','मुझे घर में रहना है'],['-bahudu','may be, could be','ಅವರು ಮನೆಯಲ್ಲಿ ಇರಬಹುದು','वे घर में हो सकते हैं'],
+['Suggest'],['-ōṇa',"let's stay",'ಮನೆಯಲ್ಲಿ ಇರೋಣ','चलो, घर में रहते हैं'],
+['Joining two actions'],['-u','having been','ಮನೆಯಲ್ಲಿ ಇದ್ದು …','घर में रहकर …'],['-re','if','ಟೈಮ್ ಇದ್ರೆ …','अगर टाइम हो तो …'],['-mēle','after','ಮನೆಯಲ್ಲಿ ಇದ್ಮೇಲೆ …','घर में रहने के बाद …'],['-akke','in order to','ಮನೆಯಲ್ಲಿ ಇರಕ್ಕೆ …','घर में रहने के लिए …'],['-ōdu','being, staying','ಮನೆಯಲ್ಲಿ ಇರೋದು','घर में रहना']];
+const ng=(t,w)=>t.includes(' ')?t.replace(' ',' '+w+' '):w+' '+t;
+function famRows(n){const x=VB[n],h=HX[n];if(!h)return IRUF;
+  const [S,P,pol,fut,it,o,oh]=h,st=x.pn.replace(/ಲಿಲ್ಲ$/,''),na=x.n.replace(/ಲ್ಲ$/,''),sh=x.s2||x.s,part=partOf(x),pb=part.replace(/ು$/,'ಿ');
+  const N='ನಾನು '+o+' ',I='मैं '+oh+' ',M=(it?'मैं ':'मैंने ')+oh+' ';
+  return [['Tell someone'],['bare verb','to a friend',o+' '+x.r,oh+' '+S],['-i','to आप',o+' '+x.im,oh+' '+pol],['-bēḍi',"please don't",o+' '+st+'ಬೇಡಿ',oh+' '+ng(pol,'मत')],
+  ['When'],['-tīni','habit or future',N+x.ps+'ೀನಿ',I+S+'ता हूँ / '+fut],['-tā idīni','right now',N+x.ps+'ಾ ಇದೀನಿ',I+S+' रहा हूँ'],['-e (past)','finished',N+x.s+'ೆ',M+P],['-idīni','have done, already done',N+pb+'ದೀನಿ',M+P+(it?' हूँ':' है')],['-tidde','was doing, used to',N+x.ps+'ಿದ್ದೆ',I+S+'ता था'],
+  ['Not'],['-alla',"won't, don't",N+x.n,I+ng(fut,'नहीं')],['-lilla',"didn't",N+x.pn,M+ng(P,'नहीं')],
+  ['Need and can'],['-bēku','have to',N+st+'ಬೇಕು','मुझे '+oh+' '+S+'ना है'],['-akke āgutte','am able to','ನನಗೆ '+o+' '+na+'ಕ್ಕೆ ಆಗುತ್ತೆ',I+S+' सकता हूँ'],['-akke āgalla',"can't",'ನನಗೆ '+o+' '+na+'ಕ್ಕೆ ಆಗಲ್ಲ',I+ng(S,'नहीं')+' सकता'],['-bahudu','may, allowed to','ನೀವು '+o+' '+na+'ಬಹುದು','आप '+oh+' '+S+' सकते हैं'],
+  ['Suggest'],['-ōṇa',"let's",o+' '+na+'ೋಣ','चलो, '+oh+' '+S+'ते हैं'],['-lā?','shall I?',N+st+'ಲಾ?',I+fut.replace(/गा$/,'')+'?'],
+  ['Joining two actions'],['-i / -u','having done, and then',o+' '+part+' …',oh+' '+S+'के …'],['-re','if',o+' '+sh+'್ರೆ …','अगर '+oh+' '+P+' तो …'],['-mēle','after',o+' '+sh+'್ಮೇಲೆ …',oh+' '+S+'ने के बाद …'],['-akke','in order to',o+' '+na+'ಕ್ಕೆ …',oh+' '+S+'ने के लिए …'],['-ōdu','the act itself',o+' '+na+'ೋದು',oh+' '+S+'ना']]}
+function fam(){const x=VB[vi];$('#fam').innerHTML=`<h3>Every form of ${rom(x.r)} · ${x.hi}</h3><p class="mute">The ending changes, the verb stays last. Each line is a ready sentence with its Hindi twin. Swap the first words for your own.</p>`+famRows(vi).map(r=>r.length===1?`<p class="fh">${r[0]}</p>`:`<div class="ph"><button class="sp" data-say="${r[2].replace(' …','')}" aria-label="Listen">&#9654;</button><div><span class="tag">${r[0]} · ${r[1]}</span><b>${rom(r[2])}</b><span class="dv">${dev(r[2])}</span><i>${r[3]}</i></div></div>`).join('')}
+function form(v,t,i){
+  if(t>=2&&v.r==='ಇರು')t=0;
+  if(t===3)return partOf(v).replace(/ು$/,'ಿ')+IRU[i].slice(1);
+  if(t===0)return i===6?v.pa:v.ps+PE[i];
+  if(t===1)return i===6?v.sa:(PA[i][0]==='್'?(v.s2||v.s):v.s)+PA[i];
+  return v.ps+'ಾ '+IRU[i]}
+
+/* ---------- saved progress (this browser only) ---------- */
+let S={xp:0,streak:0,last:'',done:{},box:{},day:{d:'',t:[0,0,0,0]}};
+try{Object.assign(S,JSON.parse(localStorage.getItem('kn90')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('kn90',JSON.stringify(S))}catch(e){}};
+const dstr=d=>d.toLocaleDateString('en-CA');
+function touch(xp,task){const t=dstr(new Date()),y=dstr(new Date(Date.now()-864e5));
+  if(S.last!==t){S.streak=S.last===y?S.streak+1:1;S.last=t}
+  if(S.day.d!==t)S.day={d:t,t:[0,0,0,0]};
+  if(task!=null)S.day.t[task]=1;S.xp+=xp||0;save();hud()}
+const LV=[[0,'ಹೊಸಬ','Newcomer'],[150,'ಸ್ವಲ್ಪ ಸ್ವಲ್ಪ','Little by little'],[500,'ಚೆನ್ನಾಗಿದೆ','Going well'],[1100,'ಸಕ್ಕತ್','Awesome'],[2000,'ನಮ್ಮವರು','One of us']];
+const level=()=>[...LV].reverse().find(l=>S.xp>=l[0]);
+const curWeek=()=>{let i=0;while(i<11&&S.done[i])i++;return i};
+function hud(){$('#st').textContent=S.streak+' day streak';$('#xp').textContent=S.xp+' XP'}
+
+/* ---------- views ---------- */
+const v=$('#v');let openWeek=null;
+function vToday(){const t=dstr(new Date());if(S.day.d!==t)S.day={d:t,t:[0,0,0,0]};
+  const c=curWeek(),w=W[c],L=level(),nx=LV[LV.indexOf(L)+1],n=Object.keys(S.done).length;
+  const tasks=[['Review 10 flashcards','5 min','#practice'],['Study this week\'s lesson and say each line aloud','10 min','#course'],['Drill 10 verb forms','5 min','#verbs'],['Listen to real Kannada: a song, a reel, a film scene','10 min','#guide']];
+  v.innerHTML=`<h2>Week ${c+1}: ${w.t}</h2><p class="mute">${w.goal}</p>
+  <div class="card hi"><h3>Today's 30 minutes</h3>${tasks.map((x,i)=>`<label class="task"><input type="checkbox" id="tk${i}" ${S.day.t[i]?'checked':''}><span>${x[0]}<br><span class="mute">${x[1]}</span></span><a href="${x[2]}">Go</a></label>`).join('')}</div>
+  <div class="card"><h3>Your level: ${rom(L[1])} <span class="mute">(${L[2]})</span></h3><div class="bar"><i style="width:${nx?Math.min(100,(S.xp-L[0])/(nx[0]-L[0])*100):100}%"></i></div><p class="mute" style="margin:6px 0 0">${nx?`${nx[0]-S.xp} XP to ${rom(nx[1])}`:'Top level reached'} · ${n} of 12 weeks passed</p></div>
+  <div class="card"><h3>The 12-week road</h3><div class="path">${W.map((x,i)=>`<a href="#course" data-w="${i}" class="${S.done[i]?'done':i===c?'cur':''}"><span class="num" title="${x.t}">${i+1}</span></a>`).join('')}</div></div>
+  <div class="card"><h3>Phrase of the day</h3>${(()=>{const P=W.flatMap(x=>x.p),q=P[new Date().getDate()*7%P.length];return ph(q[0],q[1])})()}</div>`;
+  v.querySelectorAll('.task input').forEach((b,i)=>b.onchange=()=>{touch(b.checked?5:0);S.day.t[i]=b.checked?1:0;save()});
+  v.querySelectorAll('[data-w]').forEach(a=>a.onclick=()=>{openWeek=+a.dataset.w})}
+function vCourse(){const c=openWeek??curWeek();openWeek=null;
+  v.innerHTML=`<h2>Course</h2><p class="mute">Tap any red word or the play button to hear it. Pass a week's quiz with 75% to mark it done.</p>`+W.map((w,i)=>`<details ${i===c?'open':''} class="${S.done[i]?'done':i===curWeek()?'cur':''}" id="w${i}"><summary><span class="num">${i+1}</span><span><strong>${w.t}</strong><span class="mute">${w.goal}</span></span></summary><div class="body">
+   ${w.g.map(g=>`<div class="gb"><h4>${g[0]}</h4>${G(g[1])}</div>`).join('')}
+   <div><h3>Say these aloud</h3>${w.p.map(p=>ph(p[0],p[1])).join('')}</div>
+   ${w.x?`<div><h3>Word pack</h3>${w.x.map(p=>ph(p[0],p[1])).join('')}</div>`:''}
+   ${w.d?`<div><h3>Scene</h3>${w.d.map(l=>`<div class="dlg"><span class="who">${l[0]}</span>${ph(l[1],l[2])}</div>`).join('')}</div>`:''}
+   <div class="gb"><h4>Real-world mission</h4>${w.m}</div>
+   <div class="row"><button class="btn" data-quiz="${i}">Take week ${i+1} quiz</button><button class="btn g" data-cards="${i}">Flashcards</button></div></div></details>`).join('');
+  v.querySelectorAll('[data-quiz]').forEach(b=>b.onclick=()=>{pend={m:'quiz',w:+b.dataset.quiz};location.hash='practice'});
+  v.querySelectorAll('[data-cards]').forEach(b=>b.onclick=()=>{pend={m:'cards',w:+b.dataset.cards};location.hash='practice'});
+  const o=$('#w'+c);if(o&&c>0)o.scrollIntoView()}
+let vi=0,vt=0;
+function vVerbs(){v.innerHTML=`<h2>Verb lab</h2><p class="mute">24 everyday verbs in spoken Bengaluru Kannada. Learn the endings once and they fit every verb.</p>
+  <div class="card"><div class="row"><label for="vsel" class="mute">Verb</label><select id="vsel">${VB.map((x,i)=>`<option value="${i}">${rom(x.r)} · ${x.en} · ${x.hi}</option>`).join('')}</select></div>
+  <div class="tabs" style="margin:10px 0">${TN.map((t,i)=>`<button data-t="${i}">${t}</button>`).join('')}</div><div id="vt"></div></div>
+  <div class="card" id="fam"></div>
+  <div class="card"><h3>From forms to real sentences</h3><p>Hindi order works as it is: <b>who + what or where + verb</b>. Pick the ending for what you mean and keep the verb at the end.</p>
+   <div class="gb" style="margin-bottom:8px"><h4>Past or have done?</h4>${G("{ಮಾಡಿದೆ} = किया, a finished event. {ಮಾಡಿದೀನಿ} = किया है / कर चुका हूँ, done and it matters now. Asked {ಊಟ ಆಯ್ತಾ?}, you answer {ಮಾಡಿದೀನಿ}.")}</div>
+   ${[["ಕೆಲಸ ಮಾಡಿ ಬರ್ತೀನಿ","काम करके आता हूँ"],["ಕೆಲಸ ಮಾಡಿದ್ಮೇಲೆ ಫೋನ್ ಮಾಡ್ತೀನಿ","काम करने के बाद फ़ोन करूँगा"],["ನೀವು ಹೇಳಿದ್ರೆ ಮಾಡ್ತೀನಿ","आप कहेंगे तो करूँगा"],["ಕಾಫಿ ಕುಡಿಯಕ್ಕೆ ಹೋಗೋಣ","कॉफ़ी पीने चलते हैं"],["ಕನ್ನಡ ಕಲಿಯೋದು ಸುಲಭ","कन्नड़ सीखना आसान है"],["ಊಟ ಮಾಡಿದೀನಿ, ಈಗ ಬೇಡ","खाना खा चुका हूँ, अभी नहीं चाहिए"],["ನಾನು ಮೊದಲು ಡೆಲ್ಲಿಯಲ್ಲಿ ಕೆಲಸ ಮಾಡ್ತಿದ್ದೆ","मैं पहले दिल्ली में काम करता था"],["ನನಗೆ ನಾಳೆ ಬರಕ್ಕೆ ಆಗಲ್ಲ, ಆದ್ರೆ ಫೋನ್ ಮಾಡ್ತೀನಿ","मैं कल नहीं आ सकता, लेकिन फ़ोन करूँगा"]].map(x=>ph(x[0],x[1])).join('')}</div>
+  <div class="card hi"><h3>Verb drill</h3><div id="vd"><p>Ten quick questions. Pick the right form.</p><button class="btn" id="vgo">Start drill</button></div></div>`;
+  const sel=$('#vsel');sel.value=vi;sel.onchange=()=>{vi=+sel.value;tbl();fam()};
+  v.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{vt=+b.dataset.t;tbl()});
+  $('#vgo').onclick=drill;tbl();fam()}
+function tbl(){const x=VB[vi];document.querySelectorAll('[data-t]').forEach(b=>b.classList.toggle('on',+b.dataset.t===vt));
+  const row=(a,k)=>`<tr><td>${a}</td><td><b class="k" data-say="${k}">${rom(k)}</b><span class="dv">${dev(k)}</span></td></tr>`;
+  let h;if(vt<4)h=PR.map((p,i)=>row(`<b style="font-size:15px;color:var(--ink)">${rom(p[0])}</b><br>${p[1]}`,form(x,vt,i))).join('');
+  else{const st=x.pn.replace(/ಲಿಲ್ಲ$/,'');h=[['Won\'t / doesn\'t (any person)',x.n],['Didn\'t (any person)',x.pn],['Please do',x.im],['Please don\'t',st+'ಬೇಡಿ'],['Have to',st+'ಬೇಕು'],['Shall I?',st+'ಲಾ?']].map(r=>row(r[0],r[1])).join('')}
+  $('#vt').innerHTML=`<table>${h}</table>`+(vt>=2&&vt<4&&x.r==='ಇರು'?'<p class="mute">For iru the first tab already means am, right now.</p>':'')}
+function drill(){let n=0,sc=0;const box=$('#vd');
+  const next=()=>{if(n>=10){touch(sc*4,2);box.innerHTML=`<p><b>${sc} of 10.</b> ${sc>=8?'Sakkat!':'Look at the table again and retry.'}</p><button class="btn" id="vgo">Again</button>`;$('#vgo').onclick=drill;return}
+    const x=VB[Math.random()*VB.length|0],t=Math.random()*4|0,i=Math.random()*8|0,ans=form(x,t,i);
+    const opts=shuf([...new Set(shuf(PR.map((p,j)=>form(x,t,j)).concat(form(x,(t+1)%2,i))).filter(f=>f!==ans))].slice(0,3).concat(ans));
+    box.innerHTML=`<p class="step">${n+1} of 10</p><div class="q">${PR[i][1].split(' · ')[0]} + ${x.en} + ${TN[t].toLowerCase()}<span class="dv">${x.hi}</span></div>`+opts.map(o=>`<button class="opt" data-o="${o}">${rom(o)}</button>`).join('');
+    box.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(box.querySelector('.nx'))return;const ok=b.dataset.o===ans;if(ok)sc++;b.classList.add(ok?'ok':'no');
+      box.querySelectorAll('.opt').forEach(c=>{if(c.dataset.o===ans)c.classList.add('ok')});say(ans);n++;
+      box.insertAdjacentHTML('beforeend','<button class="btn nx">Next</button>');box.querySelector('.nx').onclick=next})};
+  next()}
+
+
+let wp=0;
+function vWords(){const p=WP[wp];
+  v.innerHTML=`<h2>Words</h2><p class="mute">Everyday Bengaluru speech by situation, plus packs for recognising insults and threats.</p><div class="tabs" style="flex-wrap:wrap">${WP.map((x,i)=>`<button data-p="${i}" class="${i===wp?'on':''}">${x.t}</button>`).join('')}</div>
+  <div class="card ${p.w?'warn':''}"><h3>${p.t}</h3>${p.n?`<p>${G(p.n)}</p>`:''}${p.i.map(x=>ph(x[0],x[1])).join('')}<div class="row" style="margin-top:10px">${p.w?'':'<button class="btn" id="wc">Flashcards</button>'}<button class="btn y" id="wq">${p.w?'Recognition quiz':'Quiz this pack'}</button></div></div>`;
+  v.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{wp=+b.dataset.p;vWords()});
+  const go=m=>{pend={m,w:100+wp};location.hash='practice'};
+  if($('#wc'))$('#wc').onclick=()=>go('cards');$('#wq').onclick=()=>go('quiz')}
+let pend=null,pw=-1;
+function pool(w){if(w>=100)return WP[w-100].i.map(p=>({k:p[0],e:p[1]}));const a=[];W.forEach((x,i)=>{if(w<0?i<=curWeek():i===w)a.push(...x.p,...(x.x||[]))});return a.map(p=>({k:p[0],e:p[1]}))}
+function vPractice(){v.innerHTML=`<h2>Practice</h2><div class="card"><div class="row"><label for="psel" class="mute">Material</label><select id="psel"><option value="-1">Everything up to my current week</option>${W.map((w,i)=>`<option value="${i}">Week ${i+1}: ${w.t}</option>`).join('')}${WP.map((w,i)=>`<option value="${100+i}">Words: ${w.t}</option>`).join('')}</select></div>
+  <div class="row" style="margin-top:10px"><button class="btn" data-m="cards">Flashcards</button><button class="btn y" data-m="quiz">Quiz</button><button class="btn g" data-m="build">Sentence builder</button></div></div><div class="card" id="pa"><p>Flashcards train speaking: read the English, say the Kannada aloud, then flip.</p><p>The quiz tests understanding both ways. The sentence builder trains word order.</p></div>`;
+  const sel=$('#psel');sel.value=pw;sel.onchange=()=>pw=+sel.value;
+  const run=m=>({cards,quiz,build})[m](pw);
+  v.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>run(b.dataset.m));
+  if(pend){pw=pend.w;sel.value=pw;const m=pend.m;pend=null;run(m)}}
+function cards(w){const pa=$('#pa'),P=shuf(pool(w)).sort((a,b)=>(S.box[a.k]||0)-(S.box[b.k]||0)).slice(0,10);let i=0;
+  const next=()=>{if(i>=P.length){touch(20,0);pa.innerHTML='<p><b>Session done.</b> Cards you missed will come back first next time.</p>';return}
+    const c=P[i];pa.innerHTML=`<p class="step">Card ${i+1} of ${P.length}</p><div class="q">${esc(c.e)}</div><p class="mute">Say it aloud in Kannada, then check.</p><button class="btn" id="fl">Show Kannada</button>`;
+    $('#fl').onclick=()=>{pa.innerHTML=`<p class="step">Card ${i+1} of ${P.length}</p>${ph(c.k,c.e)}<div class="row"><button class="btn g" id="ag">Missed it</button><button class="btn" id="ok">Got it</button></div>`;say(c.k);
+      $('#ag').onclick=()=>{S.box[c.k]=0;i++;next()};$('#ok').onclick=()=>{S.box[c.k]=Math.min(5,(S.box[c.k]||0)+1);i++;next()}}};
+  next()}
+function quiz(w){const pa=$('#pa'),P=pool(w),qs=shuf(P).slice(0,8);let i=0,sc=0;
+  const next=()=>{if(i>=qs.length){const pass=sc/qs.length>=.75;if(w>=0&&w<100&&pass)S.done[w]=1;touch(sc*5,w>=0&&w<100?1:null);
+      pa.innerHTML=`<p><b>${sc} of ${qs.length}.</b> ${pass?(w>=0&&w<100?`Week ${w+1} passed. Chennāgide!`:'Chennāgide!'):'Under 75%. Review the lesson and try again.'}</p><div class="row"><button class="btn" id="rq">New quiz</button><a class="btn g" href="#course" style="text-decoration:none">Back to course</a></div>`;$('#rq').onclick=()=>quiz(w);return}
+    const q=qs[i],dir=i%2,opts=shuf([q,...shuf(P.filter(p=>p.e!==q.e&&p.k!==q.k)).slice(0,3)]);
+    pa.innerHTML=`<p class="step">Question ${i+1} of ${qs.length}</p><div class="q">${dir?esc(q.e):`<b class="k" data-say="${q.k}">${rom(q.k)}</b><span class="dv">${dev(q.k)}</span>`}</div>`+opts.map((o,j)=>`<button class="opt" data-j="${j}">${dir?rom(o.k):esc(o.e)}</button>`).join('');
+    pa.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(pa.querySelector('.nx'))return;const ok=opts[b.dataset.j]===q;if(ok)sc++;b.classList.add(ok?'ok':'no');
+      pa.querySelectorAll('.opt').forEach(c=>{if(opts[c.dataset.j]===q)c.classList.add('ok')});say(q.k);i++;
+      pa.insertAdjacentHTML('beforeend','<button class="btn nx">Next</button>');pa.querySelector('.nx').onclick=next})};
+  next()}
+function build(w){const pa=$('#pa'),clean=k=>rom(k).replace(/[?.,!]/g,'').split(/\s+/);
+  let P=pool(w).filter(p=>{const n=clean(p.k).length;return n>=3&&n<=7});if(!P.length)P=pool(-1).filter(p=>clean(p.k).length>=3);
+  const qs=shuf(P).slice(0,5);let i=0,sc=0;
+  const next=()=>{if(i>=qs.length){touch(sc*8);pa.innerHTML=`<p><b>${sc} of ${qs.length} built correctly.</b></p><button class="btn" id="rb">More sentences</button>`;$('#rb').onclick=()=>build(w);return}
+    const q=qs[i],tg=clean(q.k);let bank=shuf(tg.map((t,j)=>({t,j}))),ans=[];
+    const draw=()=>{pa.innerHTML=`<p class="step">Sentence ${i+1} of ${qs.length}</p><div class="q">${esc(q.e)}</div><div class="chips" id="an">${ans.map((c,x)=>`<button class="chip" data-a="${x}">${c.t}</button>`).join('')}</div><div class="chips" id="bk" style="border-style:solid">${bank.map((c,x)=>`<button class="chip" data-b="${x}">${c.t}</button>`).join('')}</div><div id="fb"></div>`;
+      pa.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{ans.push(bank.splice(+b.dataset.b,1)[0]);draw();if(!bank.length)check()});
+      pa.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{bank.push(ans.splice(+b.dataset.a,1)[0]);draw()})};
+    const check=()=>{const ok=ans.map(c=>c.t).join(' ')===tg.join(' ');if(ok)sc++;say(q.k);i++;
+      $('#fb').innerHTML=`<p style="color:var(--${ok?'ok':'bad'})"><b>${ok?'Correct':'The usual order is:'}</b></p>${ph(q.k,q.e)}<button class="btn nx">Next</button>`;
+      pa.querySelectorAll('.chip').forEach(c=>c.disabled=true);pa.querySelector('.nx').onclick=next};
+    draw()};
+  next()}
+function vGuide(){const yt=q=>'https://www.youtube.com/results?search_query='+encodeURIComponent(q);
+  v.innerHTML=`<h2>Guide</h2>
+  <div class="card hi"><h3>How to use this</h3><ul><li><b>Three lines per phrase.</b> Roman letters for exact length and tongue position, Hindi letters in red for your ear, Kannada script only as a reference. You do not need to read the script.</li><li><b>Words tab.</b> Everyday Bengaluru vocabulary by situation. Add one pack a week alongside the lesson.</li><li><b>Speak every line aloud.</b> Silent reading builds recognition, not speech.</li><li><b>30 minutes a day</b>, split as on the Today tab. Idle five minutes: do flashcards or one verb drill.</li><li><b>One week, one lesson.</b> Pass the quiz, do the real-world mission, move on.</li><li>Progress is saved on this phone. Once installed, everything except the outside links works offline.</li></ul></div>
+  <div class="card"><h3>Sounds: what Hindi already gives you</h3><p>Almost every Kannada sound exists in Hindi. Fix these seven things and you will sound right.</p>
+   ${[["Say the last vowel","Hindi drops the final a. Kannada never does. It is Kannada, not Kannad. {ಬೇಡ} has two beats, {ಮನೆ} has two beats. The red Hindi line cannot show this, so trust the roman line."],
+      ["Short e and short o","Hindi has only long ए and ओ. Kannada has both. Short: {ಎಲೆ} leaf, {ಒಂದು} one. Long: {ಏಳು} seven, {ಓದು} read. In roman, a bar on top (ē, ō) means long. No bar means clipped, like the e in English pen."],
+      ["ḷ is Marathi ळ","Curl the tongue tip back and flap it. {ಹಳ್ಳಿ} village against {ಹಲ್ಲಿ} lizard. {ಹೇಳಿ} · {ಮಳೆ} · {ನಾಳೆ}"],
+      ["Dots mean retroflex","ṭ ḍ ṇ are ट ड ण. Plain t d n are त द न. {ಊಟ} meal has ट. {ಹತ್ತು} ten has त."],
+      ["Hold double letters","Like पक्का and बच्चा. {ಅಕ್ಕ} · {ಅಣ್ಣ} · {ಇಲ್ಲ} · {ಬನ್ನಿ} · {ಹತ್ತು}"],
+      ["Long vowels are really long","ā ī ū last twice as long. {ಬಾ} come, {ನೀರು} water, {ಊರು} town."],
+      ["ai is अइ, not Hindi ऐ","{ಐದು} five sounds like a-i-du."]].map(x=>`<div class="gb" style="margin-bottom:8px"><h4>${x[0]}</h4>${G(x[1])}</div>`).join('')}
+   <p class="mute">The play buttons use a machine voice from your phone or from Claude. It is a rough guide. For true pronunciation, copy the native audio in the resources below.</p></div>
+  <div class="card"><h3>Write your name</h3><p>You are skipping the script, so this is the one word to learn by hand.</p><p class="big" id="nm">ಕೋನಾರ್ಕ್</p>
+   <p><b>ಕೋ</b> kō · <b>ನಾ</b> nā · <b>ರ್ಕ್</b> rk. The r is the small hook drawn after ಕ, even though you say it before the k. The tick on top of the last letter removes the final a, so it ends in k.</p>
+   <p class="mute">If you say your name with ण as in Hindi कोणार्क, write ಕೋಣಾರ್ಕ್ instead.</p>
+   <div class="row" style="margin-bottom:8px"><button class="btn g" id="n1">ಕೋನಾರ್ಕ್</button><button class="btn g" id="n2">ಕೋಣಾರ್ಕ್</button><button class="btn" id="ncl">Clear</button></div>
+   <canvas id="pad" width="1000" height="400" aria-label="Trace your name with a finger"></canvas><p class="mute">Trace over the faint letters with your finger. Five times a day for a week and it sticks.</p></div>
+  <div class="card"><h3>What three months gets you</h3><p>With 30 minutes a day plus real conversations, expect to handle daily life in Kannada: shops, autos, office small talk, simple stories, and following slow speech. Fast group chatter and films without subtitles take longer. The speed-up is real people: the weekly missions matter more than any app.</p></div>
+  <div class="card"><h3>Listen and practise outside</h3><ul>
+   <li><a href="https://ccat.sas.upenn.edu/plc/kannada/" target="_blank" rel="noopener">University of Pennsylvania: Spoken Kannada lessons and grammar</a>. Free. The best reference when you want to know why a form is the way it is.</li>
+   <li><a href="https://goethe-verlag.com/study-kannada-online.html" target="_blank" rel="noopener">50Languages Kannada</a>. 100 free lessons with native audio, and an app that works offline.</li>
+   <li><a href="https://kannadagottilla.com/kannada-courses" target="_blank" rel="noopener">Kannada Gottilla</a>. Paid WhatsApp and Google Meet classes from Bengaluru, built for people who moved here.</li>
+   <li><a href="${yt('spoken Kannada through Hindi')}" target="_blank" rel="noopener">YouTube: spoken Kannada through Hindi</a> and <a href="${yt('spoken Kannada through English daily conversation')}" target="_blank" rel="noopener">through English</a>. Pick one channel and follow it for native pronunciation.</li>
+   <li><a href="${yt('Kannada movie scenes with English subtitles')}" target="_blank" rel="noopener">YouTube: Kannada film scenes with subtitles</a>. From week 6, watch 10 minutes a day. Films to look for: Kirik Party, Lucia, Kantara, Ulidavaru Kandanthe.</li>
+   <li><a href="https://preply.com/en/blog/apps-to-learn-kannada/" target="_blank" rel="noopener">Preply's comparison of Kannada apps and tutors</a>, if you want a paid speaking partner from week 5.</li>
+   <li><a href="https://www.alllanguageresources.com/kannada-resources/" target="_blank" rel="noopener">All Language Resources: reviewed list of Kannada tools</a>.</li>
+   <li><a href="https://www.deccanherald.com/india/karnataka/bengaluru/heres-where-you-can-learn-kannada-909431.html" target="_blank" rel="noopener">Deccan Herald: Kannada classes in Bengaluru</a>.</li></ul></div>
+  <div class="card"><h3>Weekly rhythm</h3><ul><li><b>Mon to Fri:</b> the 30-minute plan.</li><li><b>Saturday:</b> the week's quiz and sentence builder, then the real-world mission.</li><li><b>Sunday:</b> one Kannada film or 30 minutes of songs. No study.</li><li><b>Weeks 4 to 12:</b> verb drill every single day. Verbs are the whole game.</li></ul></div>`
+  const c=$('#pad'),x=c.getContext('2d');let nm='ಕೋನಾರ್ಕ್',dn=false;
+  const base=()=>{const cs=getComputedStyle(document.documentElement);x.clearRect(0,0,1000,400);x.globalAlpha=.18;x.fillStyle=cs.getPropertyValue('--ink');x.font='230px "Anek Kannada","Noto Sans Kannada",sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(nm,500,215);x.globalAlpha=1;x.strokeStyle=cs.getPropertyValue('--red');x.lineWidth=12;x.lineCap=x.lineJoin='round'};
+  const pt=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*1000/r.width,(e.clientY-r.top)*400/r.height]};
+  c.onpointerdown=e=>{dn=true;x.beginPath();x.moveTo(...pt(e));try{c.setPointerCapture(e.pointerId)}catch(_){}};
+  c.onpointermove=e=>{if(dn){x.lineTo(...pt(e));x.stroke()}};c.onpointerup=c.onpointercancel=()=>dn=false;
+  const set=n=>{nm=n;$('#nm').textContent=n;base()};$('#n1').onclick=()=>set('ಕೋನಾರ್ಕ್');$('#n2').onclick=()=>set('ಕೋಣಾರ್ಕ್');$('#ncl').onclick=base;
+  base();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(base)}
+
+
+const R={today:vToday,words:vWords,course:vCourse,verbs:vVerbs,practice:vPractice,guide:vGuide};
+function route(){const h=(location.hash||'').slice(1),k=R[h]?h:'today';R[k]();
+  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+k));
+  document.querySelector('main').scrollTop=0;if(k==='course'){const o=document.querySelector('details[open]');if(o&&o.id!=='w0')o.scrollIntoView()}}
+addEventListener('hashchange',route);hud();route();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('../sw.js').catch(()=>{});
+</script>
+</body>
+</html>
