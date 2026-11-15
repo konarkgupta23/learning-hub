@@ -5,58 +5,59 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kannada in 90 Days</title>
 <link rel="manifest" href="../manifest.webmanifest">
-<meta name="theme-color" content="#c8102e">
+<meta name="theme-color" content="#ff8a4c">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+Tamma+2:wght@600;800&family=Anek+Kannada:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 /* Layout idea: a one-screen phone app. Karnataka flag yellow and red carry the identity; every Kannada line is shown three ways (roman, Hindi letters, Kannada). */
 :root{
-  --bg:#f7f5ee; --card:#ffffff; --ink:#2a1216; --mute:#75626a; --line:#e6dfcc;
-  --red:#c8102e; --on-red:#ffffff; --yel:#ffcd00; --on-yel:#2a1216; --ok:#1b7f4d; --bad:#b3261e;
+  --bg:#fff7e6; --card:#ffffff; --ink:#2b2350; --mute:#6f6a8a; --line:#f0e4c8;
+  --red:#ef3b5d; --on-red:#ffffff; --yel:#ffc93c; --on-yel:#2b2350; --teal:#0aa5a0; --on-teal:#ffffff; --ok:#0f9d7a; --bad:#d6304a;
+  --grad:linear-gradient(120deg,#ffc93c,#ff8a4c 55%,#ef3b5d); --on-grad:#2b2350; --shadow:0 4px 14px rgba(43,35,80,.08);
   --disp:'Baloo Tamma 2','Anek Kannada',system-ui,sans-serif;
   --body:'Anek Kannada','Noto Sans Kannada','Noto Sans Devanagari',system-ui,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#1a1013; --card:#27191d; --ink:#f6ecd9; --mute:#b9a5a6; --line:#3d2a2f;
-  --red:#ff6278; --on-red:#1a1013; --yel:#ffcd00; --on-yel:#1a1013; --ok:#5fd49a; --bad:#ff8a80; color-scheme:dark}}
+  --bg:#1b1730; --card:#28223f; --ink:#f7f1ff; --mute:#b5aed0; --line:#3b3458;
+  --red:#ff6b86; --on-red:#1b1730; --yel:#ffd35c; --on-yel:#1b1730; --teal:#4fd8d2; --on-teal:#1b1730; --ok:#4fe0b5; --bad:#ff8fa0; --shadow:0 4px 14px rgba(0,0,0,.3); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#1a1013; --card:#27191d; --ink:#f6ecd9; --mute:#b9a5a6; --line:#3d2a2f;
-  --red:#ff6278; --on-red:#1a1013; --yel:#ffcd00; --on-yel:#1a1013; --ok:#5fd49a; --bad:#ff8a80; color-scheme:dark}
+  --bg:#1b1730; --card:#28223f; --ink:#f7f1ff; --mute:#b5aed0; --line:#3b3458;
+  --red:#ff6b86; --on-red:#1b1730; --yel:#ffd35c; --on-yel:#1b1730; --teal:#4fd8d2; --on-teal:#1b1730; --ok:#4fe0b5; --bad:#ff8fa0; --shadow:0 4px 14px rgba(0,0,0,.3); color-scheme:dark}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--body);display:flex;flex-direction:column}
-header{flex:none;background:var(--card);border-bottom:1px solid var(--line)}
-.flag{height:6px;background:linear-gradient(var(--yel) 50%,var(--red) 50%)}
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px;max-width:720px;margin:auto}
+header{flex:none;background:var(--grad);color:var(--on-grad);box-shadow:var(--shadow);position:relative;z-index:1}
+.flag{display:none}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px 10px;max-width:720px;margin:auto}
 .top h1{font:800 22px/1 var(--disp);margin:4px 0 0}
 .stats{display:flex;gap:8px;font-size:13px;font-variant-numeric:tabular-nums}
-.pill{background:var(--yel);color:var(--on-yel);border-radius:99px;padding:2px 10px;font-weight:700;white-space:nowrap}
-.pill.r{background:var(--red);color:var(--on-red)}
+.pill{background:rgba(255,255,255,.88);color:#2b2350;border-radius:99px;padding:2px 10px;font-weight:700;white-space:nowrap}
+.pill.r{background:#2b2350;color:#fff}
 main{flex:1;overflow-y:auto;padding:16px}
 .wrap{max-width:720px;margin:auto;display:flex;flex-direction:column;gap:14px}
 nav{flex:none;display:flex;background:var(--card);border-top:1px solid var(--line)}
-nav a{flex:1;text-align:center;padding:10px 0 12px;color:var(--mute);text-decoration:none;font:600 14px var(--disp);border-top:3px solid transparent}
-nav a.on{color:var(--red);border-top-color:var(--red)}
+nav a{flex:1;text-align:center;padding:10px 0 12px;margin:0 2px;color:var(--mute);text-decoration:none;font:600 14px var(--disp);border-top:3px solid transparent;border-radius:0 0 12px 12px}
+nav a.on{color:var(--red);border-top-color:var(--red);background:color-mix(in srgb,var(--yel) 28%,transparent)}
 h2{font:800 24px/1.15 var(--disp);margin:6px 0 0;text-wrap:balance}
 h3{font:800 18px/1.2 var(--disp);margin:0 0 6px}
 p{margin:0 0 8px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)}
 .hi{border-left:6px solid var(--yel)}
 .mute{color:var(--mute);font-size:14px}
 button,select{font:600 15px var(--body);color:var(--ink)}
-.btn{background:var(--red);color:var(--on-red);border:0;border-radius:10px;padding:10px 16px;cursor:pointer}
+.btn{background:var(--red);color:var(--on-red);border:0;border-radius:12px;padding:10px 18px;cursor:pointer;box-shadow:0 3px 0 rgba(43,35,80,.16)}
 .btn.y{background:var(--yel);color:var(--on-yel)}
-.btn.g{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.g{background:var(--card);color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 :focus-visible{outline:3px solid var(--yel);outline-offset:2px}
 .ph{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
 .ph:first-of-type{border-top:0}
 .ph b{display:block;font-size:18px;line-height:1.3}
-.dv{display:block;font-size:15px;color:var(--red)}
+.dv{display:block;font-size:15px;color:var(--teal)}
 .kn{display:block;font-size:13px;color:var(--mute)}
 .ph i{display:block;font-style:normal;font-size:15px}
-.sp{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--yel);color:var(--on-yel);cursor:pointer;font-size:13px}
+.sp{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--teal);color:var(--on-teal);cursor:pointer;font-size:13px}
 .k{color:var(--red);font-weight:700;cursor:pointer;white-space:nowrap}
-details{background:var(--card);border:1px solid var(--line);border-radius:14px}
+details{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
 summary{padding:12px 14px;cursor:pointer;display:flex;gap:10px;align-items:center;list-style:none}
 summary::-webkit-details-marker{display:none}
 .num{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 15px var(--disp);background:var(--bg);border:2px solid var(--line)}
@@ -64,7 +65,7 @@ summary::-webkit-details-marker{display:none}
 .cur .num{background:var(--yel);color:var(--on-yel);border-color:var(--yel)}
 summary strong{display:block;font:800 17px/1.2 var(--disp)}
 .body{padding:0 14px 14px;display:flex;flex-direction:column;gap:12px}
-.gb{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:15px}
+.gb{background:color-mix(in srgb,var(--yel) 16%,var(--card));border-radius:12px;padding:10px 12px;font-size:15px}
 .gb h4{margin:0 0 4px;font:800 15px var(--disp)}
 .dlg{border-left:3px solid var(--red);padding-left:10px}
 .dlg .who{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
@@ -81,7 +82,7 @@ summary strong{display:block;font:800 17px/1.2 var(--disp)}
 .opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--card))}
 .opt.no{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--card))}
 .chips{display:flex;flex-wrap:wrap;gap:8px;min-height:46px;padding:8px;border:1.5px dashed var(--line);border-radius:10px;margin-bottom:10px}
-.chip{background:var(--yel);color:var(--on-yel);border:0;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:16px}
+.chip{box-shadow:0 2px 0 rgba(43,35,80,.14);background:var(--yel);color:var(--on-yel);border:0;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:16px}
 .step{font-size:13px;color:var(--mute);margin:0}
 table{width:100%;border-collapse:collapse}
 td{padding:8px 4px;border-top:1px solid var(--line);vertical-align:top}
@@ -89,7 +90,7 @@ td:first-child{width:38%;font-size:14px;color:var(--mute)}
 td b{font-size:18px}
 .tabs{display:flex;gap:6px;overflow-x:auto}
 .tabs button{flex:none;border:1.5px solid var(--line);background:var(--card);border-radius:99px;padding:6px 12px;cursor:pointer}
-.tabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tabs button.on{background:var(--red);color:var(--on-red);border-color:var(--red)}
 select{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:9px;max-width:100%}
 ul{margin:0;padding-left:20px} li{margin-bottom:6px}
 a{color:var(--red)}
@@ -99,12 +100,22 @@ a{color:var(--red)}
 #pad{width:100%;max-width:520px;aspect-ratio:5/2;border:1.5px dashed var(--line);border-radius:10px;touch-action:none;background:var(--bg);display:block}
 .big{font-size:44px;line-height:1.3;margin:0}
 .bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--red)}
-@media (prefers-reduced-motion:no-preference){.opt,.chip,.btn{transition:transform .1s}.opt:active,.chip:active,.btn:active{transform:scale(.97)}}
+.bar i{display:block;height:100%;background:var(--grad);border-radius:99px}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.97)}60%{transform:scale(1.03)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:no-preference){
+  .opt,.chip,.btn,.sp{transition:transform .1s}.opt:active,.chip:active,.btn:active,.sp:active{transform:scale(.95)}
+  .wrap>*{animation:rise .38s cubic-bezier(.2,.8,.2,1) both}
+  .wrap>*:nth-child(2){animation-delay:.04s}.wrap>*:nth-child(3){animation-delay:.08s}.wrap>*:nth-child(4){animation-delay:.12s}.wrap>*:nth-child(n+5){animation-delay:.16s}
+  #vt>*,#pa>*,#vd>*,#fam>*{animation:rise .26s ease-out both}
+  .opt.ok{animation:pop .3s}
+  nav a{transition:color .2s,background .25s,border-color .2s}
+  .bar i{transition:width .6s ease}
+}
 </style>
 </head>
 <body>
-<header><div class="flag"></div><div class="top"><h1><a href="../" style="color:var(--red);text-decoration:none;font-size:15px;margin-right:8px" aria-label="Back to menu">&#8249; Menu</a>Kannada in 90 Days</h1><div class="stats"><span class="pill r" id="st"></span><span class="pill" id="xp"></span></div></div></header>
+<header><div class="flag"></div><div class="top"><h1><a href="../" style="color:inherit;text-decoration:none;font-size:15px;margin-right:10px;background:rgba(255,255,255,.6);border-radius:99px;padding:2px 10px" aria-label="Back to menu">&#8249; Menu</a>Kannada in 90 Days</h1><div class="stats"><span class="pill r" id="st"></span><span class="pill" id="xp"></span></div></div></header>
 <main><div class="wrap" id="v"></div></main>
 <nav id="nav"><a href="#today">Today</a><a href="#course">Course</a><a href="#words">Words</a><a href="#verbs">Verbs</a><a href="#practice">Practice</a><a href="#guide">Guide</a></nav>
 <script>
@@ -445,7 +456,7 @@ function vGuide(){const yt=q=>'https://www.youtube.com/results?search_query='+en
    <li><a href="https://www.deccanherald.com/india/karnataka/bengaluru/heres-where-you-can-learn-kannada-909431.html" target="_blank" rel="noopener">Deccan Herald: Kannada classes in Bengaluru</a>.</li></ul></div>
   <div class="card"><h3>Weekly rhythm</h3><ul><li><b>Mon to Fri:</b> the 30-minute plan.</li><li><b>Saturday:</b> the week's quiz and sentence builder, then the real-world mission.</li><li><b>Sunday:</b> one Kannada film or 30 minutes of songs. No study.</li><li><b>Weeks 4 to 12:</b> verb drill every single day. Verbs are the whole game.</li></ul></div>`
   const c=$('#pad'),x=c.getContext('2d');let nm='ಕೋನಾರ್ಕ್',dn=false;
-  const base=()=>{const cs=getComputedStyle(document.documentElement);x.clearRect(0,0,1000,400);x.globalAlpha=.18;x.fillStyle=cs.getPropertyValue('--ink');x.font='230px "Anek Kannada","Noto Sans Kannada",sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(nm,500,215);x.globalAlpha=1;x.strokeStyle=cs.getPropertyValue('--red');x.lineWidth=12;x.lineCap=x.lineJoin='round'};
+  const base=()=>{const cs=getComputedStyle(document.documentElement);x.clearRect(0,0,1000,400);x.globalAlpha=.18;x.fillStyle=cs.getPropertyValue('--ink');x.font='230px "Anek Kannada","Noto Sans Kannada",sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(nm,500,215);x.globalAlpha=1;x.strokeStyle=cs.getPropertyValue('--teal');x.lineWidth=12;x.lineCap=x.lineJoin='round'};
   const pt=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*1000/r.width,(e.clientY-r.top)*400/r.height]};
   c.onpointerdown=e=>{dn=true;x.beginPath();x.moveTo(...pt(e));try{c.setPointerCapture(e.pointerId)}catch(_){}};
   c.onpointermove=e=>{if(dn){x.lineTo(...pt(e));x.stroke()}};c.onpointerup=c.onpointercancel=()=>dn=false;
