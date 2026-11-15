@@ -149,15 +149,27 @@ const $=s=>document.querySelector(s);
 /* ---------- audio: phone's Kannada voice, else Claude voice, else Hindi voice reading Hindi letters ---------- */
 let ctts=null;
 try{if(window.claude&&claude.use)claude.use('tts').then(t=>{ctts=t}).catch(()=>{})}catch(e){}
+let VS={v:'',r:.8};try{Object.assign(VS,JSON.parse(localStorage.getItem('knVoice')||'{}'))}catch(e){}
+const knVoices=()=>{try{return speechSynthesis.getVoices().filter(v=>/^kn/i.test(v.lang))}catch(e){return[]}};
 function say(k){try{
-  const ss=window.speechSynthesis,vs=ss?ss.getVoices():[];
-  const kv=vs.find(v=>/^kn/i.test(v.lang)),hv=vs.find(v=>/^hi/i.test(v.lang));
-  const dev1=(t,l,v)=>{const u=new SpeechSynthesisUtterance(t);u.lang=l;if(v)u.voice=v;u.rate=.8;ss.cancel();ss.speak(u)};
-  if(kv)return dev1(k,'kn-IN',kv);
-  if(ctts)return ctts.speak(k,{language:'kn',rate:.85}).catch(()=>{});
+  const ss=window.speechSynthesis,vs=ss?ss.getVoices():[],ks=knVoices();
+  const kv=ks.find(v=>v.voiceURI===VS.v)||ks[0],hv=vs.find(v=>/^hi/i.test(v.lang));
+  const dev1=(t,l,v)=>{const u=new SpeechSynthesisUtterance(t);u.lang=l;if(v)u.voice=v;u.rate=VS.r;ss.cancel();ss.speak(u)};
+  if(kv)return dev1(k,kv.lang||'kn-IN',kv);
+  if(ctts)return ctts.speak(k,{language:'kn',rate:Math.min(1.5,Math.max(.7,VS.r))}).catch(()=>{});
   if(hv)return dev1(dev(k),'hi-IN',hv);
   if(ss)dev1(k,'kn-IN');
 }catch(e){}}
+function sound(){const sel=document.getElementById('vc');if(!sel)return;const vs=knVoices();
+  sel.innerHTML=vs.length?vs.map((v,i)=>`<option value="${i}">Voice ${i+1}: ${esc(v.name)}${v.localService?' (works offline)':''}</option>`).join(''):'<option value="">No Kannada voice on this device</option>';
+  const at=vs.findIndex(v=>v.voiceURI===VS.v);if(at>=0)sel.value=at;
+  $('#vnote').textContent=!vs.length?"Without a Kannada voice the play buttons use Claude's voice or a Hindi voice.":vs.length===1?"This device offers one Kannada voice. More can usually be added in the phone's text-to-speech settings.":"Pick a voice to hear a sample. If the sound does not change, your phone is overriding the choice: change it in the phone's text-to-speech settings instead.";
+  const r=$('#vr'),lab=()=>{$('#vrl').textContent=(+VS.r).toFixed(2)+'x'},sv=()=>{try{localStorage.setItem('knVoice',JSON.stringify(VS))}catch(e){}};
+  r.value=VS.r;lab();
+  sel.onchange=()=>{const v=vs[+sel.value];if(v){VS.v=v.voiceURI;sv();say('ನಮಸ್ಕಾರ, ಹೇಗಿದೀರ?')}};
+  r.oninput=()=>{VS.r=+r.value;lab();sv()};
+  $('#vtest').onclick=()=>say('ನಾನು ಕನ್ನಡ ಕಲಿತಾ ಇದೀನಿ')}
+try{speechSynthesis.addEventListener('voiceschanged',sound)}catch(e){}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-say]');if(t)say(t.dataset.say)});
 
 /* ---------- course data ---------- */
@@ -448,6 +460,9 @@ function vGuide(){const yt=q=>'https://www.youtube.com/results?search_query='+en
       ["Long vowels are really long","ā ī ū last twice as long. {ಬಾ} come, {ನೀರು} water, {ಊರು} town."],
       ["ai is अइ, not Hindi ऐ","{ಐದು} five sounds like a-i-du."]].map(x=>`<div class="gb" style="margin-bottom:8px"><h4>${x[0]}</h4>${G(x[1])}</div>`).join('')}
    <p class="mute">The play buttons use a machine voice from your phone or from Claude. It is a rough guide. For true pronunciation, copy the native audio in the resources below.</p></div>
+  <div class="card"><h3>Sound</h3><div class="row"><label for="vc" class="mute">Voice</label><select id="vc"></select></div>
+   <div class="row" style="margin-top:10px"><label for="vr" class="mute">Speed</label><input type="range" id="vr" min="0.5" max="1.2" step="0.05" style="flex:1;min-width:120px;accent-color:var(--red)"><b id="vrl" style="font-variant-numeric:tabular-nums"></b><button class="btn y" id="vtest">Test</button></div>
+   <p class="mute" id="vnote" style="margin:8px 0 0"></p></div>
   <div class="card"><h3>Write your name</h3><p>You are skipping the script, so this is the one word to learn by hand.</p><p class="big" id="nm">ಕೋನಾರ್ಕ್</p>
    <p><b>ಕೋ</b> kō · <b>ನಾ</b> nā · <b>ರ್ಕ್</b> rk. The r is the small hook drawn after ಕ, even though you say it before the k. The tick on top of the last letter removes the final a, so it ends in k.</p>
    <p class="mute">If you say your name with ण as in Hindi कोणार्क, write ಕೋಣಾರ್ಕ್ instead.</p>
@@ -470,7 +485,7 @@ function vGuide(){const yt=q=>'https://www.youtube.com/results?search_query='+en
   c.onpointerdown=e=>{dn=true;x.beginPath();x.moveTo(...pt(e));try{c.setPointerCapture(e.pointerId)}catch(_){}};
   c.onpointermove=e=>{if(dn){x.lineTo(...pt(e));x.stroke()}};c.onpointerup=c.onpointercancel=()=>dn=false;
   const set=n=>{nm=n;$('#nm').textContent=n;base()};$('#n1').onclick=()=>set('ಕೋನಾರ್ಕ್');$('#n2').onclick=()=>set('ಕೋಣಾರ್ಕ್');$('#ncl').onclick=base;
-  base();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(base)}
+  base();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(base);sound()}
 
 
 const R={today:vToday,words:vWords,course:vCourse,verbs:vVerbs,practice:vPractice,guide:vGuide};
