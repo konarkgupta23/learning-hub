@@ -31,7 +31,7 @@ a.tile:focus-visible,#th:focus-visible{outline:3px solid var(--yel);outline-offs
 .soon{opacity:.6;box-shadow:none!important}
 .go{flex:none;color:var(--red);font-weight:700;font-size:26px}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:no-preference){main>*{animation:rise .4s cubic-bezier(.2,.8,.2,1) both}main>*:nth-child(2){animation-delay:.07s}main>*:nth-child(3){animation-delay:.14s}a.tile{transition:transform .12s}a.tile:active{transform:scale(.97)}}
+@media (prefers-reduced-motion:no-preference){main>*{animation:rise .4s cubic-bezier(.2,.8,.2,1) both}main>*:nth-child(2){animation-delay:.07s}main>*:nth-child(3){animation-delay:.14s}main>*:nth-child(n+4){animation-delay:.21s}a.tile{transition:transform .12s}a.tile:active{transform:scale(.97)}}
 </style>
 </head>
 <body>
@@ -39,11 +39,13 @@ a.tile:focus-visible,#th:focus-visible{outline:3px solid var(--yel);outline-offs
 <main>
   <a class="tile" href="kannada/"><div class="badge">&#3221;</div><div><strong>Kannada in 90 Days</strong><span id="kn">Spoken Bengaluru Kannada: lessons, words, verbs, practice</span></div><div class="go">&#8250;</div></a>
   <a class="tile" href="react/"><div class="badge">R</div><div><strong>React for ServiceNow</strong><span id="rx">6-week plan, JavaScript revision, project, videos</span></div><div class="go">&#8250;</div></a>
+  <a class="tile" href="ai/"><div class="badge">AI</div><div><strong>ServiceNow AI for Developers</strong><span id="ai">8 hands-on labs: Now Assist skills, AI agents, MCP</span></div><div class="go">&#8250;</div></a>
   <p style="font-size:13px">Works offline after the first open.</p>
 </main>
 <script>
 try{const s=JSON.parse(localStorage.getItem('kn90')||'{}');if(s.xp)document.getElementById('kn').textContent=(s.streak||0)+' day streak \u00b7 '+s.xp+' XP \u00b7 '+Object.keys(s.done||{}).length+' of 12 weeks passed'}catch(e){}
 try{const r=JSON.parse(localStorage.getItem('react6')||'{}'),n=k=>Object.keys(r[k]||{}).length;if(n('w')+n('j')+n('p'))document.getElementById('rx').textContent=n('w')+' of 6 weeks \u00b7 '+n('j')+' of 12 JS concepts \u00b7 '+n('p')+' of 8 project steps'}catch(e){}
+try{const a=JSON.parse(localStorage.getItem('snai8')||'{}'),n=k=>Object.keys(a[k]||{}).length;if(n('c'))document.getElementById('ai').textContent=n('l')+' of 8 labs done \u00b7 '+n('c')+' of 15 done checks passed'}catch(e){}
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 (function(){const b=document.getElementById('th');if(!b)return;const r=document.documentElement;
   const show=()=>{b.textContent=r.dataset.theme==='dark'?'\u2600 Bright':'\u263E Dark'};

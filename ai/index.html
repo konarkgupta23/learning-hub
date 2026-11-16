@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ServiceNow AI for Developers</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#ff8a4c">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('hubTheme')||'light'}catch(e){document.documentElement.dataset.theme='light'}</script>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Tamma+2:wght@600;800&family=Anek+Kannada:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: same one-screen phone shell as the React guide. This one is a lab book: eight labs with done checks, plus project, roles, interview and links tabs. */
+:root{
+  --bg:#fff7e6; --card:#ffffff; --ink:#2b2350; --mute:#6f6a8a; --line:#f0e4c8;
+  --red:#ef3b5d; --on-red:#ffffff; --yel:#ffc93c; --on-yel:#2b2350; --teal:#0b7f7b; --ok:#0f9d7a;
+  --code:#fbf1d9;
+  --grad:linear-gradient(120deg,#ffc93c,#ff8a4c 55%,#ef3b5d); --on-grad:#2b2350; --shadow:0 4px 14px rgba(43,35,80,.08);
+  --disp:'Baloo Tamma 2','Anek Kannada',system-ui,sans-serif;
+  --body:'Anek Kannada',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Roboto Mono",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1b1730; --card:#28223f; --ink:#f7f1ff; --mute:#b5aed0; --line:#3b3458;
+  --red:#ff6b86; --on-red:#1b1730; --yel:#ffd35c; --on-yel:#1b1730; --teal:#4fd8d2; --ok:#4fe0b5; --code:#1f1a36; --shadow:0 4px 14px rgba(0,0,0,.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1b1730; --card:#28223f; --ink:#f7f1ff; --mute:#b5aed0; --line:#3b3458;
+  --red:#ff6b86; --on-red:#1b1730; --yel:#ffd35c; --on-yel:#1b1730; --teal:#4fd8d2; --ok:#4fe0b5; --code:#1f1a36; --shadow:0 4px 14px rgba(0,0,0,.3); color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--body);display:flex;flex-direction:column;overflow-wrap:anywhere}
+header{flex:none;background:var(--grad);color:var(--on-grad);box-shadow:var(--shadow);position:relative;z-index:1}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;max-width:760px;margin:auto}
+.menu{flex:none;color:inherit;text-decoration:none;font:600 14px var(--disp);background:rgba(255,255,255,.6);border-radius:99px;padding:3px 10px}
+.top h1{font:800 clamp(18px,5.2vw,24px)/1.1 var(--disp);margin:4px 0 0;flex:1 1 auto;min-width:0}
+.stats{display:flex;flex-wrap:wrap;gap:6px;font-size:13px;font-variant-numeric:tabular-nums;margin-left:auto}
+#th{border:0;cursor:pointer;font:700 13px var(--body)}
+.pill{background:rgba(255,255,255,.88);color:#2b2350;border-radius:99px;padding:2px 10px;font-weight:700;white-space:nowrap}
+.pill.r{background:#2b2350;color:#fff}
+main{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:16px}
+.wrap{max-width:760px;margin:auto;display:flex;flex-direction:column;gap:14px}
+.wrap>*,.card,.body>*{min-width:0}
+section[hidden]{display:none}
+nav{flex:none;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav a{flex:1;text-align:center;padding:10px 0 12px;margin:0 1px;min-width:0;color:var(--mute);text-decoration:none;font:600 clamp(12px,3.4vw,15px) var(--disp);border-top:3px solid transparent;border-radius:0 0 12px 12px}
+nav a.on{color:var(--red);border-top-color:var(--red);background:color-mix(in srgb,var(--yel) 28%,transparent)}
+h2{font:800 24px/1.15 var(--disp);margin:6px 0 0;text-wrap:balance}
+h3{font:800 18px/1.2 var(--disp);margin:0 0 6px}
+p{margin:0 0 8px}
+p:last-child{margin-bottom:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)}
+.hi{border-left:6px solid var(--yel)}
+.mute{color:var(--mute);font-size:14px}
+a{color:var(--red)}
+:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+ul{margin:0;padding-left:20px} li{margin-bottom:6px} li:last-child{margin-bottom:0}
+code{font:500 .88em var(--mono);background:var(--code);border-radius:6px;padding:1px 5px}
+pre{margin:0;background:var(--code);border:1px solid var(--line);border-radius:12px;padding:12px;overflow-x:auto;white-space:pre;overflow-wrap:normal;font:500 13.5px/1.5 var(--mono);tab-size:2}
+pre code{background:none;padding:0;font:inherit}
+details{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+summary{padding:12px 14px;cursor:pointer;display:flex;gap:10px;align-items:center;list-style:none}
+summary>span:last-child{min-width:0;flex:1}
+summary::-webkit-details-marker{display:none}
+.num{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 15px var(--disp);background:var(--bg);border:2px solid var(--line)}
+.done .num{background:var(--ok);color:var(--card);border-color:var(--ok)}
+summary strong{display:block;font:800 17px/1.2 var(--disp)}
+.body{padding:0 14px 14px;display:flex;flex-direction:column;gap:12px}
+.gb{background:color-mix(in srgb,var(--yel) 16%,var(--card));border-radius:12px;padding:10px 12px;font-size:15px}
+.gb h4{margin:0 0 4px;font:800 15px var(--disp)}
+.inr{border-left:3px solid var(--red);padding-left:10px}
+.task{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);cursor:pointer}
+.card>.task:first-of-type{border-top:0}
+.task input{width:22px;height:22px;accent-color:var(--red);flex:none}
+.task>span{flex:1;min-width:0}
+.tag{display:block;font:800 12px var(--disp);color:var(--teal);text-transform:uppercase;letter-spacing:.05em}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0 6px}
+.bar i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th,td{padding:8px 6px 8px 0;border-top:1px solid var(--line);vertical-align:top;text-align:left;font-size:15px}
+th{border-top:0;font:800 14px var(--disp);color:var(--mute)}
+.warn{border-left:6px solid var(--red)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:no-preference){
+  section>*{animation:rise .34s cubic-bezier(.2,.8,.2,1) both}
+  section>*:nth-child(2){animation-delay:.04s}section>*:nth-child(3){animation-delay:.08s}section>*:nth-child(n+4){animation-delay:.12s}
+  nav a{transition:color .2s,background .25s,border-color .2s}
+  .bar i{transition:width .6s ease}
+}
+ol{margin:0;padding-left:20px}
+.gb p{margin-bottom:6px}
+.codewrap{position:relative;min-width:0}
+.copy{position:absolute;top:6px;right:6px;border:1px solid var(--line);border-radius:99px;background:var(--card);color:var(--ink);font:700 12px var(--body);padding:3px 10px;cursor:pointer}
+.codewrap pre{padding-top:38px}
+table.labs th:first-child,table.labs td:first-child{width:40px}
+</style>
+</head>
+<body>
+<header><div class="top"><a class="menu" href="../" aria-label="Back to menu">&#8249; Menu</a><h1>ServiceNow AI for Developers</h1><div class="stats"><button class="pill" id="th" type="button"></button><span class="pill r" id="pw"></span></div></div></header>
+<main>
+
+<!-- ================= LABS ================= -->
+<section class="wrap" id="s-labs">
+  <h2>Eight hands-on labs</h2>
+  <p class="mute">Build-only: about 5 hours a week, at least 4 of them in an instance. Each lab has build steps, test cases and a done check. Do not move on until the done check passes.</p>
+  <div class="card hi"><h3>Your progress</h3><div class="bar"><i id="bar"></i></div><p class="mute" id="sum"></p></div>
+
+  <details id="l1"><summary><span class="num">1</span><span><strong>Instance and test data</strong><span class="mute">Week 1</span></span></summary><div class="body">
+    <div class="gb"><h4>Build</h4><ol>
+      <li>Get an AI-enabled instance (see the <a href="#project">Project tab</a>) and note its release.</li>
+      <li>Seed realistic incidents with the background script below, so later labs have messy data to work on.</li>
+      <li>Add 3 to 4 work notes to some of them, including one resolved incident per category.</li>
+      <li>In Now Assist Admin, find the OOB incident summarization and resolution notes skills, activate them, and run them on your seeded records.</li>
+    </ol></div>
+<pre><code>var samples = [
+  ['Outlook not syncing on laptop', 'software', 'Mail stuck since 9am. Restarted twice. VPN connected.'],
+  ['Cannot access SAP after password reset', 'software', 'Reset via portal, SAP says account locked.'],
+  ['Printer on 3rd floor jamming', 'hardware', 'Jams every 5-6 pages, already cleaned once.'],
+  ['VPN drops every 10 minutes', 'network', 'Home wifi fine otherwise. Started after update.'],
+  ['Need access to Finance shared drive', 'inquiry', 'New joiner, manager approved on email.'],
+  ['Laptop very slow', 'hardware', 'Fan loud, 95% CPU, antivirus scan running?']
+];
+samples.forEach(function (s) {
+  var gr = new GlideRecord('incident');
+  gr.initialize();
+  gr.short_description = s[0];
+  gr.category = s[1];
+  gr.description = s[2];
+  gr.caller_id.setDisplayValue('Abel Tuter');
+  gr.insert();
+});</code></pre>
+    <div class="card"><h3>Done check</h3>
+      <label class="task"><input type="checkbox" data-i="1"><span>Summarization works on a seeded incident</span></label>
+      <label class="task"><input type="checkbox" data-i="2"><span>You can find where the skill's config and its run logs live</span></label>
+    </div>
+  </div></details>
+
+  <details id="l2"><summary><span class="num">2</span><span><strong>Scaffold the app with Build Agent</strong><span class="mute">Week 2</span></span></summary><div class="body">
+    <div class="gb"><h4>Build</h4><ol>
+      <li>On a Zurich+ PDI with the Build Agent trial, prompt it to create a scoped app "AI Service Desk Lab" with an Access Request table (requested for, application, access level, business justification, state).</li>
+      <li>Review everything it generated: tables, ACLs, scripts. List what you would change.</li>
+      <li>Fix those issues by hand and commit.</li>
+    </ol></div>
+    <div class="card"><h3>Done check</h3>
+      <label class="task"><input type="checkbox" data-i="3"><span>App and table exist in your scope, committed to Git</span></label>
+      <label class="task"><input type="checkbox" data-i="4"><span>A written list of 3+ things you corrected in the generated output</span></label>
+    </div>
+  </div></details>
+
+  <details id="l3"><summary><span class="num">3</span><span><strong>Custom skill #1: Incident triage summary</strong><span class="mute">Week 3 &middot; Now Assist Skill Kit</span></span></summary><div class="body">
+    <div class="gb"><h4>Build</h4><p class="mute">Needs the <code>sn_skill_builder.admin</code> role.</p><ol>
+      <li>Create the skill: input = incident record; provider = Now LLM Generic (or what is available).</li>
+      <li>Write a prompt that returns strict JSON. Starting point below.</li>
+      <li>Test in the editor, then deploy as a UI Action on the incident form.</li>
+      <li>Keep a prompt log: version, change, result.</li>
+    </ol></div>
+<pre><code>You are an IT service desk triage assistant.
+Using the incident fields below, return ONLY valid JSON with keys:
+"summary" (max 40 words), "suggested_category", "suggested_priority" (1-4),
+"missing_information" (list of questions to ask the caller).
+If a field is empty, do not guess; add a question to missing_information.
+
+Short description: [insert input]
+Description: [insert input]
+Work notes: [insert input]</code></pre>
+    <div class="gb"><h4>Test cases</h4><ul>
+      <li>A detailed incident (VPN) gives a clean summary</li>
+      <li>A vague one ("Laptop very slow") produces questions, not guesses</li>
+      <li>Output parses as JSON every time</li>
+    </ul></div>
+    <div class="card"><h3>Done check</h3>
+      <label class="task"><input type="checkbox" data-i="5"><span>3 prompt versions logged, with why the final one is better</span></label>
+      <label class="task"><input type="checkbox" data-i="6"><span>UI Action works for a non-admin ITIL user</span></label>
+    </div>
+  </div></details>
+
+  <details id="l4"><summary><span class="num">4</span><span><strong>Custom skill #2, with a tool</strong><span class="mute">Week 4 &middot; Similar-incident fix suggester</span></span></summary><div class="body">
+    <div class="gb"><h4>Build</h4><ol>
+      <li>Write a script tool (or flow action) that returns the 5 latest resolved incidents in the same category with their close notes.</li>
+      <li>Add it as a tool in the skill and feed its output into the prompt.</li>
+      <li>Prompt: suggest a fix grounded only in those close notes, and cite which incident number each step came from.</li>
+      <li>Deploy to the Now Assist panel. Then call the skill from a script, following the docs section on calling custom skills from scripts.</li>
+      <li>Configure skill security (ACLs) so only ITIL users can run it.</li>
+    </ol></div>
+    <div class="gb"><h4>Test cases</h4><ul>
+      <li>Category with good history gives cited steps</li>
+      <li>Category with no resolved incidents says "no similar fixes found" instead of inventing one</li>
+    </ul></div>
+    <div class="card"><h3>Done check</h3>
+      <label class="task"><input type="checkbox" data-i="7"><span>Every suggested step cites a real incident number</span></label>
+      <label class="task"><input type="checkbox" data-i="8"><span>Skill is denied for a user without the role</span></label>
+    </div>
+  </div></details>
+
+  <details id="l5"><summary><span class="num">5</span><span><strong>Your first agent: Triage agent</strong><span class="mute">Week 5 &middot; AI Agent Studio</span></span></summary><div class="body">
+    <div class="gb"><h4>Build</h4><p class="mute">Use a Building AI Agents course lab instance if your PDI lacks AI Agent Studio.</p><ol>
+      <li>Agent role and instructions: triage new incidents.</li>
+      <li>Tools: your Lab 3 skill, a record lookup, and an update-record tool limited to category, priority and work notes.</li>
+      <li>Set priority changes to need human approval (human-on-the-loop); work notes can be autonomous.</li>
+      <li>Wrap it in an agentic workflow and test in the playground.</li>
+    </ol></div>
+    <div class="gb"><h4>Test cases</h4><ul>
+      <li>New VPN incident: agent summarizes, sets category, proposes priority, waits for approval</li>
+      <li>Incident with missing info: agent adds questions to work notes, changes nothing else</li>
+    </ul></div>
+    <div class="card"><h3>Done check</h3>
+      <label class="task"><input type="checkbox" data-i="9"><span>You can read the execution log and explain why the agent chose each tool</span></label>
+      <label class="task"><input type="checkbox" data-i="10"><span>No field outside the allowed three is ever changed</span></label>
+    </div>
+  </div></details>
+
+  <details id="l6"><summary><span class="num">6</span><span><strong>Multi-agent access request workflow</strong><span class="mute">Week 6 &middot; On your Access Request table</span></span></summary><div class="body">
+    <div class="gb"><h4>Build</h4><ol>
+      <li>Intake agent: checks the request is complete, asks for missing fields.</li>
+      <li>Eligibility agent: script tool checks the user's department and existing group memberships.</li>
+      <li>Fulfilment agent: creates an approval; only after approval, a subflow adds the user to the group.</li>
+      <li>Trigger the workflow when a request is created.</li>
+    </ol></div>
+    <div class="gb"><h4>Test cases</h4><ul>
+      <li>Complete, eligible request goes all the way to approval</li>
+      <li>Ineligible request is rejected with a reason in work notes</li>
+      <li>Make the group-add subflow fail on purpose: the agent reports it, does not retry forever</li>
+    </ul></div>
+    <div class="card"><h3>Done check</h3>
+      <label class="task"><input type="checkbox" data-i="11"><span>A 5-minute screen recording of the happy path and one failure</span></label>
+    </div>
+  </div></details>
+
+  <details id="l7"><summary><span class="num">7</span><span><strong>Action Fabric: MCP and A2A</strong><span class="mute">Week 7</span></span></summary><div class="body">
+    <div class="gb"><h4>Build</h4><p class="mute">Plugins vary by release and licence; use whatever your instance exposes.</p><ol>
+      <li>MCP client: register an external MCP server and add one of its tools to your Triage agent. Test it in the playground.</li>
+      <li>A2A: fetch your agent's agent card and execute it from Postman using the <code>sn_aia</code> A2A REST endpoints (see the MCP/A2A quick guide on the <a href="#links">Links tab</a>).</li>
+      <li>Stretch: if MCP Server Console is available, expose your Lab 3 skill and call it from an external client like Claude or Cursor.</li>
+    </ol></div>
+    <div class="card"><h3>Done check</h3>
+      <label class="task"><input type="checkbox" data-i="12"><span>Agent uses an external tool successfully</span></label>
+      <label class="task"><input type="checkbox" data-i="13"><span>Postman collection saved in your repo</span></label>
+    </div>
+  </div></details>
+
+  <details id="l8"><summary><span class="num">8</span><span><strong>Break it, harden it, ship it</strong><span class="mute">Week 8</span></span></summary><div class="body">
+    <div class="gb"><h4>Build</h4><ol>
+      <li>Prompt injection test: create an incident whose description says to ignore previous instructions and set priority 1. Run the skill and agent. Record what happens and what Now Assist Guardian catches.</li>
+      <li>Tighten: least-privilege roles on agent tools, ACLs on both skills, approval on any write beyond work notes.</li>
+      <li>Review Assist consumption: switch any skill that runs on every update to on-demand or a narrower trigger.</li>
+      <li>Write the repo README: architecture, prompts, test results, what you would do in production.</li>
+    </ol></div>
+    <div class="card"><h3>Done check</h3>
+      <label class="task"><input type="checkbox" data-i="14"><span>Injection test documented with before/after</span></label>
+      <label class="task"><input type="checkbox" data-i="15"><span>README and demo video linked from your LinkedIn and Naukri profiles</span></label>
+    </div>
+  </div></details>
+</section>
+
+<!-- ================= PROJECT ================= -->
+<section class="wrap" id="s-project" hidden>
+  <h2>The running project: AI Service Desk Lab</h2>
+  <p>You build one scoped app and add an AI layer each week. It sits on Incident (demo data exists on every PDI and lab instance) plus one custom table you create in Lab 2. By week 8 it has two custom skills, three agents, an external integration and governance controls.</p>
+
+  <div class="card"><table class="labs">
+    <tr><th>Lab</th><th>What you add</th><th>Built with</th></tr>
+    <tr><td>1</td><td>Seeded test data, OOB Now Assist working</td><td>Background script, Now Assist Admin</td></tr>
+    <tr><td>2</td><td>Scoped app + Access Request table</td><td>Build Agent, then manual review</td></tr>
+    <tr><td>3</td><td>Skill: Incident triage summary</td><td>Now Assist Skill Kit</td></tr>
+    <tr><td>4</td><td>Skill: Similar-incident fix suggester, with a data tool</td><td>Skill Kit + script tool</td></tr>
+    <tr><td>5</td><td>Triage agent</td><td>AI Agent Studio</td></tr>
+    <tr><td>6</td><td>3-agent access request workflow</td><td>AI Agent Studio + subflows</td></tr>
+    <tr><td>7</td><td>External MCP tool + A2A call from Postman</td><td>Action Fabric</td></tr>
+    <tr><td>8</td><td>Guardrails, hardening, demo video</td><td>Guardian, ACLs</td></tr>
+  </table></div>
+
+  <div class="card hi"><h3>Commit after every lab</h3><p>Work in your own scope from day one, and commit to a GitHub repo through Studio source control (or export update sets) at the end of every lab. Lab instances expire; your repo does not, and it becomes your portfolio link.</p></div>
+
+  <h2>Getting an instance with AI turned on</h2>
+  <p>This is the main obstacle. Now Assist and AI Agent plugins are licensed, so a plain PDI will not have everything.</p>
+  <div class="card"><span class="tag">Option 1</span><h3>ServiceNow University lab instances</h3><p>Courses like Building AI Agents come with a temporary lab instance that has AI Agent Studio enabled. They expire, so document your steps and export update sets.</p></div>
+  <div class="card"><span class="tag">Option 2</span><h3>Build Agent on a PDI</h3><p>Build Agent works on Zurich-or-later PDIs, capped at 10 calls a month. Use them deliberately.</p></div>
+  <div class="card"><span class="tag">Option 3</span><h3>Your employer instance</h3><p>If your employer has Now Assist entitlements on a sub-prod, that is the best sandbox. Ask the platform owner.</p></div>
+  <div class="card warn"><h3>Check your release</h3><p>Docs for these features now cover Zurich and Australia. Check which release your instance is on before following a tutorial, since menus and plugin names move between releases.</p></div>
+</section>
+
+<!-- ================= ROLES ================= -->
+<section class="wrap" id="s-roles" hidden>
+  <h2>What the new roles ask for</h2>
+  <p>In 8 weeks at about 5 hours a week, you can credibly say you build custom Now Assist skills and AI agents, not just switch on out-of-box features. That is the gap between a classic senior developer and the "AI Application Developer" profile ServiceNow now markets as a career track.</p>
+  <p class="mute">Job posts mentioning Now Assist usually bundle five skill areas.</p>
+
+  <div class="card"><span class="tag">Your start: strong</span><h3>Now Assist configuration</h3><p>Activating and tuning OOB skills (summarization, resolution notes, KB generation) for ITSM, HRSD, CSM. You know all three modules.</p></div>
+  <div class="card hi"><span class="tag">Your start: new</span><h3>Now Assist Skill Kit (NASK)</h3><p>Building custom GenAI skills: prompts, inputs, tools, deployment.</p></div>
+  <div class="card hi"><span class="tag">Your start: new, builds on Flow Designer</span><h3>AI Agent Studio</h3><p>Designing agents, tools, agentic workflows, testing and orchestration. Builds on Flow Designer and Integration Hub.</p></div>
+  <div class="card hi"><span class="tag">Your start: new</span><h3>Interoperability</h3><p>MCP client/server and A2A (Action Fabric, formerly AI Agent Fabric).</p></div>
+  <div class="card"><span class="tag">Your start: partly</span><h3>Governance</h3><p>Now Assist Guardian, AI Control Tower, ACLs on skills, prompt-injection awareness. You already know platform security.</p></div>
+
+  <p>Your Flow Designer and Integration Hub certifications matter here: agent tools and skill tools are mostly flow actions, subflows and scripts, so you are not starting from zero.</p>
+
+  <h2>Credentials to target</h2>
+  <p>There is no single mainline "AI developer" certification yet; AI credentials come as delivery accreditations and micro-certifications. Pick the ones that match your modules, in this order.</p>
+  <div class="card"><span class="tag">Priority 1 &middot; After week 6</span><h3>AI Agents Delivery Accreditation</h3><p>The most-asked agentic skill.</p></div>
+  <div class="card"><span class="tag">Priority 2 &middot; After week 2</span><h3>Now Assist for Creator Implementation Delivery Accreditation</h3><p>Developer-focused; pairs with your CAD.</p></div>
+  <div class="card"><span class="tag">Priority 3 &middot; After week 4</span><h3>Now Assist for ITSM, HRSD or CSM Implementation Delivery Accreditation</h3><p>You already hold HRSD and CSM certs; take the one closest to your target roles.</p></div>
+  <div class="card"><span class="tag">Priority 4 &middot; After week 7</span><h3>AI Search and External Content Connectors Delivery Accreditation</h3><p>Covers the RAG and grounding side.</p></div>
+  <div class="card"><span class="tag">Optional &middot; Week 1</span><h3>Now Assist Executive and Agentic AI Executive micro-certifications</h3><p>Quick, high-level; fine as warm-ups, light on dev depth.</p></div>
+  <div class="card warn"><h3>Open question</h3><p>Confirm eligibility for each delivery accreditation in your ServiceNow University account, since some are aimed at partners and the catalog changes often. Exam names above match the current catalog listings but may shift.</p></div>
+</section>
+
+<!-- ================= INTERVIEW ================= -->
+<section class="wrap" id="s-interview" hidden>
+  <h2>Interview talking points</h2>
+  <p>Interviewers for these roles want proof you built something and understand the trade-offs. Have a crisp answer for each.</p>
+  <div class="card"><span class="tag">1</span><h3>When to use a custom skill vs an agent</h3><p>A skill is a single GenAI task with a defined input and output; an agent plans and chooses tools across steps.</p></div>
+  <div class="card"><span class="tag">2</span><h3>How you wrote and tested a prompt</h3><p>Versions you tried, what failed, how you evaluated output.</p></div>
+  <div class="card"><span class="tag">3</span><h3>How agent tools are built</h3><p>Subflows, flow actions, scripts, Integration Hub; how you kept them small and reliable.</p></div>
+  <div class="card"><span class="tag">4</span><h3>Governance</h3><p>Guardian, skill ACLs, human-on-the-loop for risky actions, and why agents should not get admin-level tools.</p></div>
+  <div class="card"><span class="tag">5</span><h3>Cost</h3><p>How Assist consumption shapes design, e.g. not triggering a skill on every record update.</p></div>
+  <div class="card"><span class="tag">6</span><h3>Interoperability</h3><p>MCP vs A2A in one sentence each, and a use case for both.</p></div>
+  <div class="card"><span class="tag">7</span><h3>AI-assisted development</h3><p>How you review Build Agent or Creator output before it reaches production.</p></div>
+
+  <h2>Resume lines</h2>
+  <p>For your resume and Naukri/LinkedIn profiles, add a line per built item. Only list what you have actually built in the lab.</p>
+  <div class="card"><ul>
+    <li>"Built a custom Now Assist Skill Kit skill for case summarization with flow-action grounding"</li>
+    <li>"Designed a 3-agent agentic workflow in AI Agent Studio for application intake"</li>
+  </ul></div>
+</section>
+
+<!-- ================= LINKS ================= -->
+<section class="wrap" id="s-links" hidden>
+  <h2>Resources</h2>
+  <p class="mute">Docs and community walkthroughs to follow while you build. Links need a connection; the rest of this guide works offline.</p>
+
+  <div class="card"><span class="tag">Start here</span><h3>ServiceNow University</h3><p>Free courses; use the AI Application Developer career journey mainly for its lab instances.</p><p><a href="https://www.servicenow.com/university" target="_blank" rel="noopener">Open</a></p></div>
+
+  <div class="card"><h3>Now Assist Skill Kit (Labs 3 and 4)</h3><ul>
+    <li><a href="https://www.servicenow.com/docs/r/zurich/intelligent-experiences/exploring-now-assist-skill-kit.html" target="_blank" rel="noopener">Exploring Now Assist Skill Kit (docs, Zurich)</a></li>
+    <li><a href="https://www.servicenow.com/docs/r/intelligent-experiences/na-skill-kit-roles.html" target="_blank" rel="noopener">Now Assist Skill Kit roles</a></li>
+    <li><a href="https://www.servicenow.com/docs/r/intelligent-experiences/example-na-skill-kit.html" target="_blank" rel="noopener">Example use case: child incident summarization skill</a></li>
+    <li><a href="https://www.servicenow.com/community/now-assist-articles/now-assist-skill-kit-nask-faq/ta-p/3007953" target="_blank" rel="noopener">NASK FAQ (Community)</a></li>
+    <li><a href="https://www.servicenow.com/community/developer-advocate-blog/build-custom-ai-skills-with-now-assist-skill-kit-step-by-step/ba-p/3098008" target="_blank" rel="noopener">Build custom AI skills with NASK, step by step</a></li>
+  </ul></div>
+
+  <div class="card"><h3>Build Agent and AI agents (Labs 2, 5 and 6)</h3><ul>
+    <li><a href="https://www.servicenow.com/docs/r/zurich/application-development/building-applications/vibe-code-with-build-agent.html" target="_blank" rel="noopener">Get started with Build Agent (docs)</a></li>
+    <li><a href="https://www.servicenow.com/community/developer-forum/build-your-first-ai-agent-in-servicenow/td-p/3520067" target="_blank" rel="noopener">Build your first AI Agent (Community)</a></li>
+    <li><a href="https://www.servicenow.com/community/now-assist-blog/click-think-automate-ai-agents-in-servicenow-part-1/ba-p/3280740" target="_blank" rel="noopener">Getting an AI Agent instance via learning labs</a></li>
+  </ul></div>
+
+  <div class="card"><h3>Action Fabric, MCP and A2A (Lab 7)</h3><ul>
+    <li><a href="https://www.servicenow.com/community/now-assist-articles/action-fabric-mcp-server-mcp-client-and-a2a-explained/ta-p/3557794" target="_blank" rel="noopener">Action Fabric: MCP Server, MCP Client and A2A explained</a></li>
+    <li><a href="https://www.servicenow.com/community/developer-advocate-blog/servicenow-action-fabric-a-detailed-walkthrough/ba-p/3581348" target="_blank" rel="noopener">Action Fabric detailed walkthrough</a></li>
+    <li><a href="https://www.servicenow.com/community/now-assist-forum/quick-amp-crisp-mcp-a2a-and-ai-agent/m-p/3475831" target="_blank" rel="noopener">MCP, A2A and AI Agent quick guide with Postman examples</a></li>
+  </ul></div>
+
+  <div class="card"><h3>Learning paths and certifications</h3><ul>
+    <li><a href="https://nowben.com/your-guide-to-servicenow-ai-learning-resources/" target="_blank" rel="noopener">Guide to ServiceNow AI learning resources (NowBen)</a></li>
+    <li><a href="https://www.servicenow.com/community/training-and-certifications/blog5-tm-consolidated-full-amp-up-to-date-servicenow/m-p/3508209" target="_blank" rel="noopener">Consolidated ServiceNow certification list 2026</a></li>
+  </ul></div>
+
+  <div class="card"><h3>YouTube</h3><p>Search the ServiceNow Developer channel for "Now Assist Skill Kit", "AI Agent Studio" and "Creator Toolbox" demos, and the AI Academy sessions.</p></div>
+
+  <p class="mute">Plan written on 10 Nov 2026. These features change between releases, so re-check names and menus against your instance.</p>
+</section>
+
+</main>
+<nav id="nav"><a href="#labs">Labs</a><a href="#project">Project</a><a href="#roles">Roles</a><a href="#interview">Interview</a><a href="#links">Links</a></nav>
+<script>
+/* Progress lives in this phone's browser only: {c:{1:1,...}} = ticked done checks, {l:{1:1,...}} = labs whose checks are all ticked. */
+const LABS=8;
+let S={c:{},l:{}};
+try{const o=JSON.parse(localStorage.getItem('snai8')||'{}');if(o&&o.c&&typeof o.c==='object')S.c=o.c}catch(e){}
+const save=()=>{try{localStorage.setItem('snai8',JSON.stringify(S))}catch(e){}};
+const boxes=[...document.querySelectorAll('input[data-i]')];
+function paint(){
+  S.l={};
+  boxes.forEach(b=>{b.checked=!!S.c[b.dataset.i]});
+  for(let i=1;i<=LABS;i++){const d=document.getElementById('l'+i),bs=[...d.querySelectorAll('input[data-i]')];
+    const on=bs.every(b=>b.checked);d.classList.toggle('done',on);if(on)S.l[i]=1}
+  const n=Object.keys(S.l).length,c=Object.keys(S.c).length;
+  document.getElementById('pw').textContent=n+' of '+LABS+' labs';
+  document.getElementById('bar').style.width=(c/boxes.length*100)+'%';
+  document.getElementById('sum').textContent=n+' of '+LABS+' labs done · '+c+' of '+boxes.length+' done checks passed';
+}
+boxes.forEach(b=>b.onchange=()=>{if(b.checked)S.c[b.dataset.i]=1;else delete S.c[b.dataset.i];paint();save()});
+paint();
+/* Open the first lab that is not finished yet. */
+for(let i=1;i<=LABS;i++){if(!S.l[i]){document.getElementById('l'+i).open=true;break}}
+
+/* Copy button on each code block, for pasting into the instance. */
+document.querySelectorAll('pre').forEach(p=>{const b=document.createElement('button');b.type='button';b.className='copy';b.textContent='Copy';
+  b.onclick=()=>{const t=p.querySelector('code').textContent;
+    (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{b.textContent='Copied'}).catch(()=>{b.textContent='Select and copy'});
+    setTimeout(()=>{b.textContent='Copy'},1800)};
+  const w=document.createElement('div');w.className='codewrap';p.replaceWith(w);w.append(b,p)});
+
+const TABS=['labs','project','roles','interview','links'];
+function route(){const h=(location.hash||'').slice(1),k=TABS.includes(h)?h:'labs';
+  TABS.forEach(t=>{document.getElementById('s-'+t).hidden=t!==k});
+  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+k));
+  document.querySelector('main').scrollTop=0}
+addEventListener('hashchange',route);route();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('../sw.js').catch(()=>{});
+(function(){const b=document.getElementById('th');if(!b)return;const r=document.documentElement;
+  const show=()=>{b.textContent=r.dataset.theme==='dark'?'☀ Bright':'☾ Dark'};
+  b.onclick=()=>{r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';try{localStorage.setItem('hubTheme',r.dataset.theme)}catch(e){}show()};show()})();
+</script>
+</body>
+</html>
